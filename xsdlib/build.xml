@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!--
+    Copyright (C) 2008 Orbeon, Inc.
+
+    This program is free software; you can redistribute it and/or modify it under the terms of the
+    GNU Lesser General Public License as published by the Free Software Foundation; either version
+    2.1 of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+    without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Lesser General Public License for more details.
+
+    The full text of the license is available at http://www.gnu.org/copyleft/lesser.html
+-->
+<project name="xsdlib" default="jar" basedir=".">
+
+    <dirname property="build.root" file="${ant.file}"/>
+    <property name="build.dir" value="build"/>
+    <property name="src.dir" location="src"/>
+    <property name="src-apache.dir" location="src-apache"/>
+    <property name="jar.file" value="${build.dir}/lib/xsdlib.jar"/>
+
+    <property name="build.debug" value="on"/>
+
+    <target name="init">
+        <tstamp/>
+        <tstamp>
+            <format property="time" pattern="yyyyMMddHHmm" timezone="GMT"/>
+        </tstamp>
+        <echo message="Building xsdlib"/>
+    </target>
+
+    <target name="prepare" depends="init">
+        <mkdir dir="${build.dir}/classes"/>
+        <mkdir dir="${build.dir}/lib"/>
+    </target>
+
+    <target name="classes" depends="prepare">
+        <javac destdir="${build.dir}/classes"
+               debug="${build.debug}" optimize="off" target="1.5" source="1.4"
+               fork="true" memoryInitialSize="128m" memoryMaximumSize="256m">
+            <src path="${src.dir}"/>
+            <src path="${src-apache.dir}"/>
+        </javac>
+    </target>
+
+    <target name="jar" depends="classes">
+        <jar destfile="${jar.file}" compress="false">
+            <fileset dir="${build.dir}/classes">
+                <include name="**/*.class"/>
+            </fileset>
+            <fileset dir="${src.dir}">
+                <include name="**/*.properties"/>
+            </fileset>
+            <fileset dir="${src-apache.dir}">
+                <include name="**/*.properties"/>
+            </fileset>
+        </jar>
+    </target>
+
+</project>
