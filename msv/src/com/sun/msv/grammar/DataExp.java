@@ -72,10 +72,15 @@ public final class DataExp extends Expression implements DataOrValueExp {
     public void visit( ExpressionVisitorVoid visitor )                { visitor.onData(this); }
 
     protected boolean calcEpsilonReducibility() {
-        XSDatatype xdt = (XSDatatype)dt;
-        if(except==Expression.nullSet && xdt.isAlwaysValid())
-            // because for such datatype we return STRING_IGNORE from StringCareLevelCalculator 
+        // ORBEON: This can fail, see https://forge.objectweb.org/tracker/index.php?func=detail&aid=307143&group_id=168&atid=350207
+//        XSDatatype xdt = (XSDatatype)dt;
+//        if(except==Expression.nullSet && xdt.isAlwaysValid())
+//            // because for such datatype we return STRING_IGNORE from StringCareLevelCalculator
+//            return true;
+
+        if(except==Expression.nullSet && dt instanceof XSDatatype && ((XSDatatype)dt).isAlwaysValid())
             return true;
+
         return false;
     }
     
