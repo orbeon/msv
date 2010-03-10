@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<!--
+    Copyright (C) 2008 Orbeon, Inc.
+
+    This program is free software; you can redistribute it and/or modify it under the terms of the
+    GNU Lesser General Public License as published by the Free Software Foundation; either version
+    2.1 of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+    without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Lesser General Public License for more details.
+
+    The full text of the license is available at http://www.gnu.org/copyleft/lesser.html
+-->
+<?xml-stylesheet type="text/xsl" href="ant2html.xsl"?>
+<project name="MSV" default="jar" basedir=".">
+
+    <dirname property="build.root" file="${ant.file}"/>
+    <property name="build.dir" value="build"/>
+    <property name="src.dir" location="src"/>
+    <property name="jar.file" value="${build.dir}/lib/msv-20081113_orbeon_20081209.jar"/>
+
+    <property name="build.debug" value="on"/>
+
+    <target name="init">
+        <tstamp/>
+        <tstamp>
+            <format property="time" pattern="yyyyMMddHHmm" timezone="GMT"/>
+        </tstamp>
+        <echo message="Building MSV"/>
+    </target>
+
+    <target name="prepare" depends="init">
+        <mkdir dir="${build.dir}/classes"/>
+        <mkdir dir="${build.dir}/lib"/>
+    </target>
+
+    <target name="classpath" depends="prepare">
+        <path id="class.path">
+            <fileset id="libs" dir="${build.root}">
+                <include name="isorelax.jar"/>
+                <include name="relaxngDatatype.jar"/>
+                <include name="xsdlib.jar"/>
+                <include name="xmlParserAPIs.jar"/>
+                <include name="xercesImpl.jar"/>
+                <include name="resolver-xerces_2_6_2_orbeon.jar"/>
+            </fileset>
+        </path>
+    </target>
+
+    <target name="classes" depends="classpath">
+        <javac destdir="${build.dir}/classes"
+               classpathref="class.path"
+               debug="${build.debug}" optimize="off" target="1.4" source="1.4"
+               fork="true" memoryInitialSize="128m" memoryMaximumSize="256m">
+
+            <src path="${src.dir}"/>
+        </javac>
+    </target>
+
+    <target name="jar" depends="classes">
+        <jar destfile="${jar.file}" compress="false">
+            <fileset dir="${build.dir}/classes">
+                <include name="**/*.class"/>
+            </fileset>
+            <fileset dir="${src.dir}">
+                <include name="**/*.properties"/>
+            </fileset>
+        </jar>
+    </target>
+
+</project>
