@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+
+Name: org/relaxng/datatype
+Implementation-Title: RELAX NG Datatype Interface
+Implementation-Version: 1.0
+Implementation-Vendor: relaxng.sourceforge.net
