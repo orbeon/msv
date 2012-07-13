@@ -16,7 +16,7 @@ public final class InternalImpl extends RegExpFactory {
 
         try {
             re = new RegularExpression(exp,"X");
-        } catch ( org.apache.xerces.impl.xpath.regex.ParseException e ) {
+        } catch ( com.sun.msv.datatype.regexp.ParseException e ) {
             throw new ParseException(e.getMessage(),e.getLocation());
         }
 
