@@ -22,15 +22,12 @@ public final class LightStack {
     private int len = 0;
     
     public void push( Object o ) {
-        try {
-            buf[len] = o;
-            len++;
-        } catch( ArrayIndexOutOfBoundsException e ) {
+        if (len >= buf.length) {
             Object[] nbuf = new Object[buf.length*2];
             System.arraycopy( buf, 0, nbuf, 0, buf.length );
             buf = nbuf;
-            buf[len++] = o;
         }
+        buf[len++] = o;
     }
     
     public Object pop() {
