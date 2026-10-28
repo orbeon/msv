@@ -2,6 +2,7 @@ package org.orbeon.msv.verifier
 
 import org.orbeon.msv.grammar.{IDContextProvider, IDContextProvider2}
 import org.orbeon.msv.util.{DatatypeRef, StartTagInfo, StringRef}
+import scala.annotation.static
 
 /**
  * exposes the low-level validation engine interface.
@@ -51,6 +52,6 @@ trait Acceptor:
   def getStringCareLevel: Int
 
 object Acceptor:
-  val STRING_PROHIBITED: Int = 0x00
-  val STRING_IGNORE: Int     = 0x01
-  val STRING_STRICT: Int     = 0x02
+  @static final val STRING_PROHIBITED = 0x00
+  @static final val STRING_IGNORE     = 0x01
+  @static final val STRING_STRICT     = 0x02
