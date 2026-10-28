@@ -6,7 +6,7 @@ import org.orbeon.msv.datatype.ErrorDatatypeLibrary
 import org.orbeon.msv.grammar.{Expression, ExpressionPool, ReferenceExp}
 import org.orbeon.msv.grammar.trex.TREXGrammar
 import org.orbeon.msv.reader.*
-import org.orbeon.msv.reader.trex.*
+import org.orbeon.msv.reader.trex.{DivInGrammarState, IncludePatternState, NameClassChoiceState, RootState, TREXBaseReader, TREXSequencedStringChecker}
 import org.orbeon.msv.util.{LightStack, StartTagInfo, Uri}
 import org.orbeon.msv.relaxng.datatype.{Datatype, DatatypeException, DatatypeLibrary, DatatypeLibraryFactory}
 import org.xml.sax.{Attributes, InputSource, Locator, SAXException}
@@ -253,9 +253,9 @@ object RELAXNGReader:
     def dataParam(parent: State, tag: StartTagInfo): State = new DataParamState()
     def value(parent: State, tag: StartTagInfo): State = new ValueState()
     def list(parent: State, tag: StartTagInfo): State = new ListState()
-    def define(parent: State, tag: StartTagInfo): State = new org.orbeon.msv.reader.trex.ng.DefineState()
+    def define(parent: State, tag: StartTagInfo): State = new DefineState()
     override def start(parent: State, tag: StartTagInfo): State = new StartState()
-    def redefine(parent: State, tag: StartTagInfo): State = new org.orbeon.msv.reader.trex.ng.DefineState()
+    def redefine(parent: State, tag: StartTagInfo): State = new DefineState()
     def redefineStart(parent: State, tag: StartTagInfo): State = new StartState()
     override def includeGrammar(parent: State, tag: StartTagInfo): State = new IncludeMergeState()
     def externalRef(parent: State, tag: StartTagInfo): State = new IncludePatternState()
