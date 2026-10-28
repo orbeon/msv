@@ -30,8 +30,8 @@ LICENSE
 ----------------------------------------------------------------------
 
 The most of the code is licensed under the BSD license (see
-license.txt). The only exception to this is the code taken from Apache,
-which is licensed under ASL 1.1 (see Apache-LICENSE-1.1.txt)
+../LICENSE.txt). The only exception to this is the code taken from Apache,
+which is licensed under ASL 1.1 (see ../Apache-LICENSE-1.1.txt)
 
 In the source tree, the code taken from Apache is hosted in 'src-apache'
 so that XSDLib can be built without Apache code if necessary.

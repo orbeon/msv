@@ -1,4 +1,4 @@
-(See license.txt for the actual license terms)
+(See ../LICENSE.txt for the actual license terms)
 
 Copyright 2001-2008 Sun Microsystems, Inc. 901 San Antonio Road, Palo Alto,
 California, 94303, U.S.A. All rights reserved.

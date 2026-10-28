@@ -14,7 +14,7 @@ for this purpose.
 LICENSE
 ----------------------------------------------------------------------
 
-See copying.txt.
+See ../RELAXNG-LICENSE.txt.
 
 Note: this license is the BSD license.
 
