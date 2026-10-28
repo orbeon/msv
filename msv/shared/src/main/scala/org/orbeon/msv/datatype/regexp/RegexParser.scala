@@ -609,8 +609,13 @@ class RegexParser {
   @throws[ParseException]
   def parseFactor(): Token = {
     val ch = this.read()
+    var tok: Token = null
     ch match {
+      case T_CARET if this.isSet(RegularExpression.XMLSCHEMA_MODE) =>
+        tok = this.processCaret()
       case T_CARET => return this.processCaret()
+      case T_DOLLAR if this.isSet(RegularExpression.XMLSCHEMA_MODE) =>
+        tok = this.processDollar()
       case T_DOLLAR => return this.processDollar()
       case T_LOOKAHEAD => return this.processLookahead()
       case T_NEGATIVELOOKAHEAD => return this.processNegativelookahead()
@@ -632,7 +637,8 @@ class RegexParser {
         }
       case _ =>
     }
-    var tok = this.parseAtom()
+    if (tok == null)
+      tok = this.parseAtom()
     var ch2 = this.read()
     ch2 match {
       case T_STAR => return this.processStar(tok)

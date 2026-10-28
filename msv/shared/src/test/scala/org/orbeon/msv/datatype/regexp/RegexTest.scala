@@ -59,5 +59,17 @@ object RegexTest extends TestSuite {
       assert(!regex.matches("XYZ-123"))
       assert(!regex.matches("xyz-1234"))
     }
+    test("xml schema literal dollar and caret with quantifiers") {
+      // In XML Schema regex, $ and ^ are normal characters and can have quantifiers (?, +, *, {min,max})
+      val reDollar = new RegularExpression("[$]?([A-Z]+)$?[0-9]+", "X")
+      assert(reDollar.matches("A1"))
+      assert(reDollar.matches("$A1"))
+      assert(reDollar.matches("A$1"))
+      assert(reDollar.matches("$A$1"))
+
+      val reCaret = new RegularExpression("^[A-Z]+^?[0-9]+", "X")
+      assert(reCaret.matches("^A1"))
+      assert(reCaret.matches("^A^1"))
+    }
   }
 }
