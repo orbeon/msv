@@ -1,6 +1,6 @@
 package org.xml.sax.helpers
 
-import java.util.{ArrayList as JArrayList, Collections, EmptyStackException, Enumeration, HashMap as JHashMap, HashSet as JHashSet, List as JList, Map as JMap, Set as JSet}
+import java.util.{ArrayList as JArrayList, Collections, Enumeration, HashMap as JHashMap, HashSet as JHashSet, List as JList, Map as JMap, NoSuchElementException, Set as JSet}
 
 /**
  * Encapsulate Namespace logic for use by SAX drivers or verification engines.
@@ -92,7 +92,7 @@ class NamespaceSupport {
 
   def popContext(): Unit = {
     if (contextPos <= 0) {
-      throw new EmptyStackException()
+      throw new NoSuchElementException("no context to pop")
     }
     contextPos -= 1
     currentContext = contexts(contextPos)

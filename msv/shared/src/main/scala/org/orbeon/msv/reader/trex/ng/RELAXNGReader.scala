@@ -1,6 +1,6 @@
 package org.orbeon.msv.reader.trex.ng
 
-import java.util.{HashMap, HashSet, Iterator as JIterator, Map as JMap, Set as JSet, Stack as JStack, Vector as JVector}
+import java.util.{ArrayList as JArrayList, HashMap, HashSet, Iterator as JIterator, List as JList, Map as JMap, Set as JSet}
 import javax.xml.parsers.SAXParserFactory
 import org.orbeon.msv.datatype.ErrorDatatypeLibrary
 import org.orbeon.msv.grammar.{Expression, ExpressionPool, ReferenceExp}
@@ -105,11 +105,11 @@ class RELAXNGReader(
 
   private def checkRunawayExpression(
     node: ReferenceExp,
-    items: JStack[ReferenceExp],
+    items: JList[ReferenceExp],
     visitedExps: JSet[ReferenceExp]
   ): Unit =
     if !visitedExps.add(node) then return
-    items.push(node)
+    items.add(node)
 
     val directItr = getRefExpParseInfo(node).directRefs.iterator()
     while directItr.hasNext do
@@ -117,7 +117,7 @@ class RELAXNGReader(
       var idx = items.lastIndexOf(child)
       if idx != -1 then
         var s = ""
-        val locs = new JVector[Locator]()
+        val locs = new JArrayList[Locator]()
         while idx < items.size() do
           val e = items.get(idx)
           if e.name != null then
@@ -137,18 +137,18 @@ class RELAXNGReader(
 
       checkRunawayExpression(child, items, visitedExps)
 
-    val empty = new JStack[ReferenceExp]()
+    val empty = new JArrayList[ReferenceExp]()
     val indirectItr = getRefExpParseInfo(node).indirectRefs.iterator()
     while indirectItr.hasNext do
       checkRunawayExpression(indirectItr.next(), empty, visitedExps)
 
-    items.pop()
+    items.remove(items.size() - 1)
 
   val restrictionChecker: RestrictionChecker = new RestrictionChecker(this)
 
   override def wrapUp(): Unit =
     try
-      checkRunawayExpression(grammar, new JStack[ReferenceExp](), new HashSet[ReferenceExp]())
+      checkRunawayExpression(grammar, new JArrayList[ReferenceExp](), new HashSet[ReferenceExp]())
     catch
       case _: AbortLoopException =>
 
@@ -234,8 +234,8 @@ object RELAXNGReader:
       this.combineMethod = rhs.combineMethod
       this.redefinition = rhs.redefinition
 
-    val directRefs: JVector[ReferenceExp] = new JVector[ReferenceExp]()
-    val indirectRefs: JVector[ReferenceExp] = new JVector[ReferenceExp]()
+    val directRefs: JList[ReferenceExp] = new JArrayList[ReferenceExp]()
+    val indirectRefs: JList[ReferenceExp] = new JArrayList[ReferenceExp]()
 
   object RefExpParseInfo:
     sealed trait RedefinitionStatus

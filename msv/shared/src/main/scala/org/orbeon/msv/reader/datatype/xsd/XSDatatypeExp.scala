@@ -1,6 +1,6 @@
 package org.orbeon.msv.reader.datatype.xsd
 
-import java.util.{Collection as JCollection, Iterator as JIterator, Stack as JStack, Vector as JVector}
+import java.util.{ArrayList as JArrayList, Collection as JCollection, Iterator as JIterator, List as JList}
 import org.xml.sax.Locator
 import org.orbeon.msv.datatype.xsd.{DatatypeFactory, FinalComponent, StringType, TypeIncubator, XSDatatype, XSDatatypeImpl}
 import org.orbeon.msv.grammar.{ExpressionPool, ReferenceExp}
@@ -65,10 +65,10 @@ class XSDatatypeExp private (
     val context = if context0 == null then new XSDatatypeExp.RenderingContext() else context0
 
     if context.callStack.contains(this) then
-      val locs = new JVector[Locator]()
+      val locs = new JArrayList[Locator]()
       var i = 0
       while i < context.callStack.size() do
-        locs.add(context.callStack.get(i).asInstanceOf[XSDatatypeExp].ownerState.getLocation)
+        locs.add(context.callStack.get(i).ownerState.getLocation)
         i += 1
       ownerState.reader.reportError(
         locs.toArray(new Array[Locator](locs.size())),
@@ -77,7 +77,7 @@ class XSDatatypeExp private (
       )
       return StringType.theInstance
 
-    context.callStack.push(this)
+    context.callStack.add(this)
 
     try
       dt = renderer.render(context)
@@ -91,7 +91,7 @@ class XSDatatypeExp private (
         )
         dt = StringType.theInstance
 
-    context.callStack.pop()
+    context.callStack.remove(context.callStack.size() - 1)
 
     if dt == null then throw new Error()
 
@@ -137,7 +137,7 @@ object XSDatatypeExp:
     def render(context: RenderingContext): XSDatatype
 
   class RenderingContext:
-    private[xsd] val callStack: JStack[XSDatatypeExp] = new JStack[XSDatatypeExp]()
+    private[xsd] val callStack: JList[XSDatatypeExp] = new JArrayList[XSDatatypeExp]()
 
   @throws(classOf[DatatypeException])
   def makeList(nsUri: String, typeName: String, itemType: XSDatatypeExp, reader: GrammarReader): XSDatatypeExp =

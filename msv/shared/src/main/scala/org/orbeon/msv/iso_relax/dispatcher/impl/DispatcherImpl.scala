@@ -1,6 +1,6 @@
 package org.orbeon.msv.iso_relax.dispatcher.impl
 
-import java.util.{Enumeration, Vector => JVector}
+import java.util.{ArrayList as JArrayList, Enumeration, List as JList}
 import org.orbeon.msv.iso_relax.dispatcher.{Dispatcher, ElementDecl, IslandVerifier, SchemaProvider}
 import org.xml.sax.helpers.NamespaceSupport
 import org.xml.sax.{Attributes, ContentHandler, DTDHandler, ErrorHandler, Locator, SAXException, XMLReader}
@@ -15,8 +15,8 @@ class DispatcherImpl(private val schema: SchemaProvider) extends Dispatcher {
   protected var errorHandler: ErrorHandler = uninitialized
   private var currentHandler: IslandVerifier = schema.createTopLevelVerifier()
   private var contextStack: Context = uninitialized
-  protected val unparsedEntityDecls: JVector[Dispatcher.UnparsedEntityDecl] = new JVector[Dispatcher.UnparsedEntityDecl]()
-  protected val notationDecls: JVector[Dispatcher.NotationDecl] = new JVector[Dispatcher.NotationDecl]()
+  protected val unparsedEntityDecls: JList[Dispatcher.UnparsedEntityDecl] = new JArrayList[Dispatcher.UnparsedEntityDecl]()
+  protected val notationDecls: JList[Dispatcher.NotationDecl] = new JArrayList[Dispatcher.NotationDecl]()
 
   protected class Transponder extends ContentHandler with DTDHandler {
     def unparsedEntityDecl(name: String, systemId: String, publicId: String, notation: String): Unit = {

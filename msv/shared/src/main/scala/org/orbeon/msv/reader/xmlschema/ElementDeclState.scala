@@ -1,6 +1,6 @@
 package org.orbeon.msv.reader.xmlschema
 
-import java.util.Vector as JVector
+import java.util.{ArrayList as JArrayList, List as JList}
 import org.xml.sax.Locator
 import org.orbeon.msv.datatype.xsd.BooleanType
 import org.orbeon.msv.grammar.*
@@ -205,7 +205,7 @@ class ElementDeclState extends ExpressionWithChildState:
     parentState.isInstanceOf[GlobalDeclState]
 
   /** Identity constraints found in this element. */
-  protected val idcs: JVector[IdentityConstraint] = new JVector[IdentityConstraint]()
+  protected val idcs: JList[IdentityConstraint] = new JArrayList[IdentityConstraint]()
 
   /** This method is called when an identity constraint declaration is found. */
   protected[xmlschema] def onIdentityConstraint(idc: IdentityConstraint): Unit =

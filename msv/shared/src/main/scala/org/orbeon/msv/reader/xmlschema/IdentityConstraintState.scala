@@ -1,6 +1,6 @@
 package org.orbeon.msv.reader.xmlschema
 
-import java.util.Vector as JVector
+import java.util.{ArrayList as JArrayList, List as JList}
 import org.xml.sax.Locator
 import org.orbeon.msv.grammar.*
 import org.orbeon.msv.grammar.xmlschema.*
@@ -15,7 +15,7 @@ import org.orbeon.msv.util.StartTagInfo
 class IdentityConstraintState extends SimpleState:
 
   protected var selector: Array[XPath] = null
-  protected val fields: JVector[Field] = new JVector[Field]()
+  protected val fields: JList[Field] = new JArrayList[Field]()
 
   protected def createChildState(tag: StartTagInfo): State =
     if tag.localName == "selector" then
@@ -118,7 +118,7 @@ class IdentityConstraintState extends SimpleState:
     parentState.asInstanceOf[ElementDeclState].onIdentityConstraint(id)
 
   protected def parseSelector(xpath: String): Array[XPath] =
-    val pathObjs = new JVector[XPath]()
+    val pathObjs = new JArrayList[XPath]()
     val paths = xpath.split("\\|").map(_.trim).filter(_.nonEmpty)
     var success = true
     var i = 0
@@ -133,7 +133,7 @@ class IdentityConstraintState extends SimpleState:
     else new Array[XPath](0)
 
   protected def parseField(xpath: String): Field =
-    val pathObjs = new JVector[XPath]()
+    val pathObjs = new JArrayList[XPath]()
     val field = new Field()
     val paths = xpath.split("\\|").map(_.trim).filter(_.nonEmpty)
     var success = true
@@ -158,7 +158,7 @@ class IdentityConstraintState extends SimpleState:
    */
   protected def parsePath(pathObj: XPath, xpathParam: String, parseField: Boolean): Boolean =
     var xpath = xpathParam
-    val stepObjs = new JVector[NameClass]()
+    val stepObjs = new JArrayList[NameClass]()
     if xpath.startsWith(".//") then
       pathObj.isAnyDescendant = true
       xpath = xpath.substring(3)

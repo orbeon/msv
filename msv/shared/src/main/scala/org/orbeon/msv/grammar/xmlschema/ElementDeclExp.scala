@@ -1,6 +1,6 @@
 package org.orbeon.msv.grammar.xmlschema
 
-import java.util.Vector as JVector
+import java.util.{ArrayList as JArrayList, List as JList}
 import org.orbeon.msv.grammar.*
 import org.orbeon.msv.grammar.util.ExpressionWalker
 
@@ -37,7 +37,7 @@ class ElementDeclExp(val parent: XMLSchemaSchema, typeLocalName: String) extends
 
     override def getNameClass: NameClass = elementName
 
-    val identityConstraints: JVector[IdentityConstraint] = new JVector[IdentityConstraint]()
+    val identityConstraints: JList[IdentityConstraint] = new JArrayList[IdentityConstraint]()
 
   var isNillable: Boolean = false
 

@@ -1,6 +1,6 @@
 package org.orbeon.msv.verifier.regexp
 
-import java.util.{Collections, Comparator, HashSet as JHashSet, List as JList, Set as JSet, Vector as JVector}
+import java.util.{ArrayList as JArrayList, Collections, Comparator, HashSet as JHashSet, List as JList, Set as JSet}
 import org.orbeon.msv.driver.textui.Debug
 import org.orbeon.msv.grammar.*
 import org.orbeon.msv.grammar.util.{ExpressionPrinter, IDContextProviderWrapper}
@@ -209,7 +209,7 @@ abstract class ExpressionAcceptor(
     r
 
   private def concatenateMessages(items: JSet[String], more: Boolean, separatorStr: String, moreStr: String): String =
-    concatenateMessages(new JVector[String](items), more, separatorStr, moreStr)
+    concatenateMessages(new JArrayList[String](items), more, separatorStr, moreStr)
 
   private def getDiagnosisFromTypedString(exp: DataOrValueExp, value: StringToken): String =
     try

@@ -3,7 +3,7 @@ package org.orbeon.msv.relaxng.datatype.helpers
 import org.orbeon.msv.relaxng.datatype.{DatatypeLibrary, DatatypeLibraryFactory}
 import java.io.{BufferedReader, IOException, InputStream, InputStreamReader, Reader}
 import java.net.URL
-import java.util.{Enumeration, NoSuchElementException, Vector as JVector}
+import java.util.{ArrayList as JArrayList, Collections, Enumeration, List as JList, NoSuchElementException}
 import scala.compiletime.uninitialized
 
 private[helpers] object DatatypeLibraryLoaderPlatform {
@@ -32,7 +32,7 @@ private[helpers] object DatatypeLibraryLoaderPlatform {
     def this(cls: Class[?]) = this(cls.getName, Some(cls))
     def this(name: String)  = this(name, None)
 
-    private val providers = new JVector[AnyRef]()
+    private val providers = new JArrayList[AnyRef]()
     private var loader: Loader = uninitialized
     try {
       loader = new Loader2()
@@ -53,7 +53,7 @@ private[helpers] object DatatypeLibraryLoaderPlatform {
 
       def nextElement(): AnyRef = {
         try {
-          val res = providers.elementAt(nextIndex)
+          val res = providers.get(nextIndex)
           nextIndex += 1
           res
         } catch {
@@ -140,7 +140,7 @@ private[helpers] object DatatypeLibraryLoaderPlatform {
               case None     => obj.isInstanceOf[DatatypeLibraryFactory]
             }
             if (isInst) {
-              providers.addElement(obj)
+              providers.add(obj)
               return true
             }
           } catch {
@@ -166,7 +166,7 @@ private[helpers] object DatatypeLibraryLoaderPlatform {
       try {
         val in = url.openStream()
         val r: Reader = new BufferedReader(new InputStreamReader(in, "UTF-8"))
-        val tokens = new JVector[String]()
+        val tokens = new JArrayList[String]()
         val tokenBuf = new java.lang.StringBuilder()
         var state = START
         var done = false
@@ -189,14 +189,14 @@ private[helpers] object DatatypeLibraryLoaderPlatform {
                 }
             }
             if (tokenBuf.length() != 0 && state != IN_NAME) {
-              tokens.addElement(tokenBuf.toString())
+              tokens.add(tokenBuf.toString())
               tokenBuf.setLength(0)
             }
           }
         }
         if (tokenBuf.length() != 0)
-          tokens.addElement(tokenBuf.toString())
-        tokens.elements()
+          tokens.add(tokenBuf.toString())
+        Collections.enumeration(tokens)
       } catch {
         case _: IOException =>
           new Singleton[String](null)

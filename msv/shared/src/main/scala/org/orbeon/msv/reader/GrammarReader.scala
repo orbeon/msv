@@ -1,7 +1,7 @@
 package org.orbeon.msv.reader
 
 import java.io.IOException
-import java.util.{ArrayList as JArrayList, Iterator as JIterator, Map as JMap, Vector as JVector}
+import java.util.{ArrayList as JArrayList, Iterator as JIterator, List as JList, Map as JMap}
 import javax.xml.parsers.{ParserConfigurationException, SAXParserFactory}
 import org.xml.sax.{InputSource, Locator, SAXException, SAXParseException, XMLReader}
 import org.xml.sax.helpers.{LocatorImpl, XMLFilterImpl}
@@ -288,8 +288,8 @@ abstract class GrammarReader protected (
   final def onID(dt: org.orbeon.msv.relaxng.datatype.Datatype, token: StringToken): Unit = ()
 
   // back patching
-  private val backPatchJobs: JVector[GrammarReader.BackPatch] = new JVector[GrammarReader.BackPatch]()
-  private val delayedBackPatchJobs: JVector[XSDatatypeExp] = new JVector[XSDatatypeExp]()
+  private val backPatchJobs: JList[GrammarReader.BackPatch] = new JArrayList[GrammarReader.BackPatch]()
+  private val delayedBackPatchJobs: JList[XSDatatypeExp] = new JArrayList[XSDatatypeExp]()
 
   final def addBackPatchJob(job: GrammarReader.BackPatch): Unit =
     backPatchJobs.add(job)
@@ -299,12 +299,12 @@ abstract class GrammarReader protected (
 
   final def runBackPatchJob(): Unit =
     val oldLoc = locator
-    runBackPatchJob(backPatchJobs.asInstanceOf[JVector[GrammarReader.BackPatch]])
-    runBackPatchJob(delayedBackPatchJobs.asInstanceOf[JVector[GrammarReader.BackPatch]])
+    runBackPatchJob(backPatchJobs)
+    runBackPatchJob(delayedBackPatchJobs.asInstanceOf[JList[GrammarReader.BackPatch]])
     locator = oldLoc
 
-  private final def runBackPatchJob(vec: JVector[GrammarReader.BackPatch]): Unit =
-    val itr = vec.iterator()
+  private final def runBackPatchJob(jobs: JList[GrammarReader.BackPatch]): Unit =
+    val itr = jobs.iterator()
     while itr.hasNext do
       val job = itr.next()
       locator = job.getOwnerState.getLocation

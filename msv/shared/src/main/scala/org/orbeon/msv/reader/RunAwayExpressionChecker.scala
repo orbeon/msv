@@ -1,6 +1,6 @@
 package org.orbeon.msv.reader
 
-import java.util.{Set as JSet, Stack as JStack, Vector as JVector}
+import java.util.{ArrayDeque, ArrayList as JArrayList, HashSet as JHashSet, List as JList, Set as JSet}
 import org.xml.sax.Locator
 import org.orbeon.msv.grammar.*
 
@@ -11,10 +11,10 @@ import org.orbeon.msv.grammar.*
  */
 class RunAwayExpressionChecker protected (val reader: GrammarReader) extends ExpressionVisitorVoid:
 
-  private val testedExps: JSet[Expression] = new java.util.HashSet[Expression]()
-  private val contentModel: JSet[Expression] = new java.util.HashSet[Expression]()
-  private val refStack: JStack[Expression] = new JStack[Expression]()
-  private val unprocessedElementExps: JStack[ElementExp] = new JStack[ElementExp]()
+  private val testedExps: JSet[Expression] = new JHashSet[Expression]()
+  private val contentModel: JSet[Expression] = new JHashSet[Expression]()
+  private val refStack: JList[Expression] = new JArrayList[Expression]()
+  private val unprocessedElementExps: ArrayDeque[ElementExp] = new ArrayDeque[ElementExp]()
 
   private def check(exp: Expression): Unit =
     try
@@ -73,9 +73,9 @@ class RunAwayExpressionChecker protected (val reader: GrammarReader) extends Exp
       var s = ""
       var i = refStack.indexOf(exp)
       val sz = refStack.size()
-      val locs = new JVector[Locator]()
+      val locs = new JArrayList[Locator]()
       while i < sz do
-        val item = refStack.elementAt(i)
+        val item = refStack.get(i)
         if item.isInstanceOf[ReferenceExp] then
           val e = item.asInstanceOf[ReferenceExp]
           if e.name != null then
@@ -88,10 +88,10 @@ class RunAwayExpressionChecker protected (val reader: GrammarReader) extends Exp
       throw RunAwayExpressionChecker.eureka
 
     contentModel.add(exp)
-    refStack.push(exp)
+    refStack.add(exp)
 
   private def leave(): Unit =
-    contentModel.remove(refStack.pop())
+    contentModel.remove(refStack.remove(refStack.size() - 1))
 
   def onRef(exp: ReferenceExp): Unit =
     enter(exp)

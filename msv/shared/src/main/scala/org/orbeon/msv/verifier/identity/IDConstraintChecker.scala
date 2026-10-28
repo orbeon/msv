@@ -1,6 +1,6 @@
 package org.orbeon.msv.verifier.identity
 
-import java.util.{HashMap as JHashMap, HashSet as JHashSet, Map as JMap, Set as JSet, Vector as JVector}
+import java.util.{ArrayList as JArrayList, HashMap as JHashMap, HashSet as JHashSet, List as JList, Map as JMap, Set as JSet}
 import org.orbeon.msv.driver.textui.Debug
 import org.orbeon.msv.grammar.xmlschema.{ElementDeclExp, IdentityConstraint, KeyRefConstraint, XMLSchemaGrammar}
 import org.orbeon.msv.relaxng.datatype.Datatype
@@ -25,7 +25,7 @@ class IDConstraintChecker(
 ) extends Verifier(new XSREDocDecl(grammar), errorHandler):
 
   /** active matchers. */
-  protected val matchers: JVector[Matcher] = new JVector[Matcher]()
+  protected val matchers: JList[Matcher] = new JArrayList[Matcher]()
 
   def add(matcher: Matcher): Unit =
     matchers.add(matcher)
