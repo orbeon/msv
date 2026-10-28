@@ -56,8 +56,6 @@
 
 package org.orbeon.msv.datatype.regexp
 
-import java.text.CharacterIterator
-
 /**
  * An instance of this class has ranges captured in matching.
  *
@@ -69,7 +67,6 @@ final class Match extends Cloneable {
   var endpos: Array[Int] = null
   var nofgroups: Int = 0
 
-  var ciSource: CharacterIterator = null
   var strSource: String = null
   var charSource: Array[Char] = null
 
@@ -78,8 +75,8 @@ final class Match extends Cloneable {
     val ma = new Match()
     if (this.nofgroups > 0) {
       ma.setNumberOfGroups(this.nofgroups)
-      if (this.ciSource != null) ma.setSource(this.ciSource)
       if (this.strSource != null) ma.setSource(this.strSource)
+      else if (this.charSource != null) ma.setSource(this.charSource)
       var i = 0
       while (i < this.nofgroups) {
         ma.setBeginning(i, this.getBeginning(i))
@@ -105,20 +102,12 @@ final class Match extends Cloneable {
     }
   }
 
-  protected[regexp] def setSource(ci: CharacterIterator): Unit = {
-    this.ciSource = ci
-    this.strSource = null
-    this.charSource = null
-  }
-
   protected[regexp] def setSource(str: String): Unit = {
-    this.ciSource = null
     this.strSource = str
     this.charSource = null
   }
 
   protected[regexp] def setSource(chars: Array[Char]): Unit = {
-    this.ciSource = null
     this.strSource = null
     this.charSource = chars
   }
@@ -180,9 +169,7 @@ final class Match extends Cloneable {
     val begin = this.beginpos(index)
     val end = this.endpos(index)
     if (begin < 0 || end < 0) return null
-    if (this.ciSource != null) {
-      REUtil.substring(this.ciSource, begin, end)
-    } else if (this.strSource != null) {
+    if (this.strSource != null) {
       this.strSource.substring(begin, end)
     } else {
       new String(this.charSource, begin, end - begin)

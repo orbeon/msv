@@ -13,7 +13,7 @@ import org.orbeon.msv.datatype.SerializationContext
 import org.orbeon.msv.datatype.xsd.regex.{RegExp, RegExpFactory}
 import org.orbeon.msv.relaxng.datatype.ValidationContext
 
-import java.text.ParseException
+import org.orbeon.msv.datatype.regexp.ParseException
 
 /**
  * "anyURI" type.

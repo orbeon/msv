@@ -56,7 +56,7 @@
 
 package org.orbeon.msv.datatype.regexp
 
-import java.text.CharacterIterator
+
 
 /**
  * @version REUtil.java,v 1.7 2002/11/20 00:49:47 twl Exp
@@ -84,15 +84,6 @@ object REUtil {
     new String(chs)
   }
 
-  def substring(iterator: CharacterIterator, begin: Int, end: Int): String = {
-    val src = new Array[Char](end - begin)
-    var i = 0
-    while (i < src.length) {
-      src(i) = iterator.setIndex(i + begin)
-      i += 1
-    }
-    new String(src)
-  }
 
   // ================================================================
 

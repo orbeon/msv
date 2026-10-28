@@ -13,7 +13,7 @@ import org.orbeon.msv.datatype.xsd.regex.{RegExp, RegExpFactory}
 import org.orbeon.msv.relaxng.datatype.{DatatypeException, ValidationContext}
 
 import java.io.{IOException, ObjectInputStream}
-import java.text.ParseException
+import org.orbeon.msv.datatype.regexp.ParseException
 
 /**
  * "pattern" facet validator.

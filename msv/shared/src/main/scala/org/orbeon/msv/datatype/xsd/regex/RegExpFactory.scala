@@ -1,7 +1,6 @@
 package org.orbeon.msv.datatype.xsd.regex
 
-import org.orbeon.msv.datatype.regexp.InternalImpl
-import java.text.ParseException
+import org.orbeon.msv.datatype.regexp.{InternalImpl, ParseException}
 
 // Just return the internal implementation, as that's the one that would be found anyway
 abstract class RegExpFactory {

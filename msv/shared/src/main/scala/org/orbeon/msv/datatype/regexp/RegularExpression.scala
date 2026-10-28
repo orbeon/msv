@@ -56,7 +56,7 @@
 
 package org.orbeon.msv.datatype.regexp
 
-import java.text.CharacterIterator
+
 
 /**
  * A regular expression matching engine using Non-deterministic Finite Automaton (NFA).
@@ -373,8 +373,7 @@ class RegularExpression extends java.io.Serializable {
 
   def matches(target: Array[Char], start: Int, end: Int, matchResult: Match): Boolean = {
     val src = new CharArraySource(target)
-    this.matchesInternal(src, start, end, matchResult, isCharArray = true, isString = false, isIterator = false,
-      charsTarget = target, strTarget = null, iterTarget = null)
+    this.matchesInternal(src, start, end, matchResult, charsTarget = target, strTarget = null)
   }
 
   def matches(target: String): Boolean = {
@@ -391,20 +390,7 @@ class RegularExpression extends java.io.Serializable {
 
   def matches(target: String, start: Int, end: Int, matchResult: Match): Boolean = {
     val src = new StringSource(target)
-    this.matchesInternal(src, start, end, matchResult, isCharArray = false, isString = true, isIterator = false,
-      charsTarget = null, strTarget = target, iterTarget = null)
-  }
-
-  def matches(target: CharacterIterator): Boolean = {
-    this.matches(target, null)
-  }
-
-  def matches(target: CharacterIterator, matchResult: Match): Boolean = {
-    val start = target.getBeginIndex
-    val end = target.getEndIndex
-    val src = new IteratorSource(target)
-    this.matchesInternal(src, start, end, matchResult, isCharArray = false, isString = false, isIterator = true,
-      charsTarget = null, strTarget = null, iterTarget = target)
+    this.matchesInternal(src, start, end, matchResult, charsTarget = null, strTarget = target)
   }
 
   // ================================================================
@@ -412,8 +398,7 @@ class RegularExpression extends java.io.Serializable {
   // ================================================================
 
   private def matchesInternal(src: CharSource, start: Int, end: Int, matchResult0: Match,
-                              isCharArray: Boolean, isString: Boolean, isIterator: Boolean,
-                              charsTarget: Array[Char], strTarget: String, iterTarget: CharacterIterator): Boolean = {
+                              charsTarget: Array[Char], strTarget: String): Boolean = {
     synchronized {
       if (this.operations == null) this.prepare()
       if (this.context == null) this.context = new Context()
@@ -427,9 +412,8 @@ class RegularExpression extends java.io.Serializable {
     var m = matchResult0
     if (m != null) {
       m.setNumberOfGroups(this.nofparen)
-      if (isCharArray) m.setSource(charsTarget)
-      else if (isString) m.setSource(strTarget)
-      else if (isIterator) m.setSource(iterTarget)
+      if (charsTarget != null) m.setSource(charsTarget)
+      else if (strTarget != null) m.setSource(strTarget)
     } else if (this.hasBackReferences) {
       m = new Match()
       m.setNumberOfGroups(this.nofparen)
@@ -451,9 +435,8 @@ class RegularExpression extends java.io.Serializable {
     }
 
     if (this.fixedStringOnly) {
-      val o = if (isCharArray) this.fixedStringTable.matches(charsTarget, con.start, con.limit)
-      else if (isString) this.fixedStringTable.matches(strTarget, con.start, con.limit)
-      else this.fixedStringTable.matches(iterTarget, con.start, con.limit)
+      val o = if (charsTarget != null) this.fixedStringTable.matches(charsTarget, con.start, con.limit)
+      else this.fixedStringTable.matches(strTarget, con.start, con.limit)
       if (o >= 0) {
         if (con.matchResult != null) {
           con.matchResult.setBeginning(0, o)
@@ -467,9 +450,8 @@ class RegularExpression extends java.io.Serializable {
     }
 
     if (this.fixedString != null) {
-      val o = if (isCharArray) this.fixedStringTable.matches(charsTarget, con.start, con.limit)
-      else if (isString) this.fixedStringTable.matches(strTarget, con.start, con.limit)
-      else this.fixedStringTable.matches(iterTarget, con.start, con.limit)
+      val o = if (charsTarget != null) this.fixedStringTable.matches(charsTarget, con.start, con.limit)
+      else this.fixedStringTable.matches(strTarget, con.start, con.limit)
       if (o < 0) {
         con.inuse = false
         return false
@@ -1062,78 +1044,6 @@ object RegularExpression {
             return false
         }
         i += 1
-      }
-      true
-    }
-  }
-
-  final class IteratorSource(val target: CharacterIterator) extends CharSource {
-    def charAt(index: Int): Char = target.setIndex(index)
-
-    def regionMatches(offset: Int, limit: Int, part: String, partlen: Int): Boolean = {
-      if (offset < 0 || limit - offset < partlen) return false
-      var i = 0
-      var off = offset
-      while (i < partlen) {
-        if (target.setIndex(off) != part.charAt(i)) return false
-        off += 1
-        i += 1
-      }
-      true
-    }
-
-    def regionMatches(offset: Int, limit: Int, offset2: Int, partlen: Int): Boolean = {
-      if (offset < 0 || limit - offset < partlen) return false
-      var off1 = offset
-      var off2 = offset2
-      var len = partlen
-      while (len > 0) {
-        if (target.setIndex(off1) != target.setIndex(off2)) return false
-        off1 += 1
-        off2 += 1
-        len -= 1
-      }
-      true
-    }
-
-    def regionMatchesIgnoreCase(offset: Int, limit: Int, part: String, partlen: Int): Boolean = {
-      if (offset < 0 || limit - offset < partlen) return false
-      var off = offset
-      var i = 0
-      var len = partlen
-      while (len > 0) {
-        val ch1 = target.setIndex(off)
-        val ch2 = part.charAt(i)
-        if (ch1 != ch2) {
-          val uch1 = Character.toUpperCase(ch1)
-          val uch2 = Character.toUpperCase(ch2)
-          if (uch1 != uch2 && Character.toLowerCase(uch1) != Character.toLowerCase(uch2))
-            return false
-        }
-        off += 1
-        i += 1
-        len -= 1
-      }
-      true
-    }
-
-    def regionMatchesIgnoreCase(offset: Int, limit: Int, offset2: Int, partlen: Int): Boolean = {
-      if (offset < 0 || limit - offset < partlen) return false
-      var off1 = offset
-      var off2 = offset2
-      var len = partlen
-      while (len > 0) {
-        val ch1 = target.setIndex(off1)
-        val ch2 = target.setIndex(off2)
-        if (ch1 != ch2) {
-          val uch1 = Character.toUpperCase(ch1)
-          val uch2 = Character.toUpperCase(ch2)
-          if (uch1 != uch2 && Character.toLowerCase(uch1) != Character.toLowerCase(uch2))
-            return false
-        }
-        off1 += 1
-        off2 += 1
-        len -= 1
       }
       true
     }
