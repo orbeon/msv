@@ -10,7 +10,7 @@
 package org.orbeon.msv.datatype.xsd.datetime
 
 import java.io.Serializable
-import java.util.SimpleTimeZone
+import java.util.TimeZone as JTimeZone
 
 /**
  * Simple time zone component.
@@ -25,15 +25,28 @@ class TimeZone extends Serializable {
   var minutes: Int = 0
 
   private def readResolve(): AnyRef =
-    new SimpleTimeZone(minutes * 60 * 1000, "")
+    TimeZone.create(minutes * 60 * 1000, "")
 }
 
 object TimeZone {
-  private class JavaZeroTimeZone extends SimpleTimeZone(0, "XSD 'Z' timezone") with Serializable {
+  class CustomTimeZone(rawOffset: Int, id: String) extends JTimeZone with Serializable {
+    setID(id)
+    def getOffset(era: Int, year: Int, month: Int, day: Int, dayOfWeek: Int, milliseconds: Int): Int = rawOffset
+    def getRawOffset: Int = rawOffset
+    def setRawOffset(offsetMillis: Int): Unit = ()
+    override def useDaylightTime(): Boolean = false
+    override def inDaylightTime(date: java.util.Date): Boolean = false
+    override def getDisplayName(daylight: Boolean, style: Int, locale: java.util.Locale): String = getID
+  }
+
+  def create(rawOffset: Int, id: String): JTimeZone =
+    new CustomTimeZone(rawOffset, id)
+
+  private class JavaZeroTimeZone extends CustomTimeZone(0, "XSD 'Z' timezone") {
     protected def readResolve(): AnyRef = ZERO
   }
 
-  private class JavaMissingTimeZone extends SimpleTimeZone(0, "XSD missing timezone") with Serializable {
+  private class JavaMissingTimeZone extends CustomTimeZone(0, "XSD missing timezone") {
     protected def readResolve(): AnyRef = MISSING
   }
 
@@ -42,13 +55,13 @@ object TimeZone {
    * to the ZERO singleton instance. Once again, using a special
    * instance is a hack to make the round-tripping work OK.
    */
-  val ZERO: java.util.TimeZone = new JavaZeroTimeZone()
+  val ZERO: JTimeZone = new JavaZeroTimeZone()
 
   /**
    * The {@link java.util.TimeZone} representation that corresponds
    * to the missing time zone.
    */
-  val MISSING: java.util.TimeZone = new JavaMissingTimeZone()
+  val MISSING: JTimeZone = new JavaMissingTimeZone()
 
   /**
    * @deprecated exists just for the backward serialization compatibility.

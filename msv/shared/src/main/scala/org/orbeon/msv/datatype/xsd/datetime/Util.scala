@@ -11,7 +11,6 @@ package org.orbeon.msv.datatype.xsd.datetime
 
 import org.orbeon.msv.datatype.xsd.Comparator
 import java.math.{BigDecimal, BigInteger}
-import java.util.SimpleTimeZone
 
 /**
  * Date/time-related utility functions/variables.
@@ -34,8 +33,8 @@ private[datetime] object Util {
   val decimal0: BigDecimal = new BigDecimal(BigInteger.ZERO, 0)
   val int0: java.lang.Integer = java.lang.Integer.valueOf(0)
 
-  val timeZonePos14: java.util.TimeZone = new SimpleTimeZone(14 * 60 * 60 * 1000, "")
-  val timeZoneNeg14: java.util.TimeZone = new SimpleTimeZone(-14 * 60 * 60 * 1000, "")
+  val timeZonePos14: java.util.TimeZone = TimeZone.create(14 * 60 * 60 * 1000, "")
+  val timeZoneNeg14: java.util.TimeZone = TimeZone.create(-14 * 60 * 60 * 1000, "")
 
   /**
    * Compare two objects

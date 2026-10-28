@@ -10,7 +10,6 @@
 package org.orbeon.msv.datatype.xsd.datetime
 
 import java.math.BigInteger
-import java.util.SimpleTimeZone
 
 /**
  * Parses XML Schema date/time related types into a structure.
@@ -106,7 +105,7 @@ abstract class AbstractCalendarParser(
               val totalMinutes = h * 60 + m
               if totalMinutes > 14 * 60 then
                 throw new IllegalArgumentException(value) // timezone offset out of range
-              setTimeZone(new SimpleTimeZone(totalMinutes * (if (vch == '+') 1 else -1) * 60 * 1000, ""))
+              setTimeZone(TimeZone.create(totalMinutes * (if (vch == '+') 1 else -1) * 60 * 1000, ""))
             } else {
               setTimeZone(TimeZone.MISSING)
             }
