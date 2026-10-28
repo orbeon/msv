@@ -44,8 +44,8 @@ class Base64BinaryType private () extends BinaryBaseType("base64Binary"):
 object Base64BinaryType:
   val theInstance: Base64BinaryType = new Base64BinaryType()
 
+  private final val PADDING: Byte = 127
   private val decodeMap: Array[Byte] = initDecodeMap()
-  private val PADDING: Byte = 127
 
   private def initDecodeMap(): Array[Byte] =
     val map = new Array[Byte](256)

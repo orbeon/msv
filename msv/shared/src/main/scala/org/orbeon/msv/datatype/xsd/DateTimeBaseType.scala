@@ -28,7 +28,7 @@ abstract class DateTimeBaseType(typeName: String)
 
   final def checkFormat(content: String, context: ValidationContext): Boolean =
     try
-      CalendarParser.parse(getFormat(), content)
+      PreciseCalendarParser.parse(getFormat(), content)
       true
     catch
       case _: IllegalArgumentException => false

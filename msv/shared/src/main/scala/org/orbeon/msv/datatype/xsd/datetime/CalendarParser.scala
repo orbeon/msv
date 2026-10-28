@@ -22,7 +22,6 @@ final class CalendarParser private (format: String, value: String) extends Abstr
   cal.clear(Calendar.YEAR)
   cal.clear(Calendar.MONTH)
   cal.clear(Calendar.DAY_OF_MONTH)
-  cal.setLenient(false)
 
   protected def parseFractionSeconds(): Unit = {
     cal.set(Calendar.MILLISECOND, parseInt(1, 3))
@@ -61,7 +60,6 @@ object CalendarParser {
   def parse(format: String, value: String): GregorianCalendar = {
     val parser = new CalendarParser(format, value)
     parser.parse()
-    parser.cal.getTimeInMillis
     parser.cal
   }
 }

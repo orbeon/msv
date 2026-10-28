@@ -57,4 +57,5 @@ object FloatType:
     if java.lang.Float.isNaN(v) then "NaN"
     else if v == java.lang.Float.POSITIVE_INFINITY then "INF"
     else if v == java.lang.Float.NEGATIVE_INFINITY then "-INF"
+    else if v == 0.0f && (1.0f / v) < 0.0f then "-0.0"
     else value.toString

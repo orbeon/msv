@@ -57,4 +57,5 @@ object DoubleType:
     if java.lang.Double.isNaN(v) then "NaN"
     else if v == java.lang.Double.POSITIVE_INFINITY then "INF"
     else if v == java.lang.Double.NEGATIVE_INFINITY then "-INF"
+    else if v == 0.0 && (1.0 / v) < 0.0 then "-0.0"
     else value.toString
