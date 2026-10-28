@@ -42,6 +42,11 @@ abstract class SimpleState extends State:
       reader.locator = prevLoc
     reader.popState()
 
+  final override def endDocument(): Unit =
+    // top-level state receives endDocument event instead of endElement event.
+    endSelf()
+    reader.popState()
+
   /**
    * this method is called in endElement method
    * derived classes should perform clean up and instantiate

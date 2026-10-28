@@ -161,9 +161,12 @@ abstract class GrammarReader protected (
       if source == null then new InputSource(uri)
       else source
     catch
-      case e: IOException => controller.error(e, locator)
-      case e: SAXException => controller.error(e, locator)
-    throw AbortException.theInstance
+      case e: IOException =>
+        controller.error(e, locator)
+        throw AbortException.theInstance
+      case e: SAXException =>
+        controller.error(e, locator)
+        throw AbortException.theInstance
 
   final def combineURI(baseURI: String, relativeURI: String): String =
     Uri.resolve(baseURI, relativeURI)

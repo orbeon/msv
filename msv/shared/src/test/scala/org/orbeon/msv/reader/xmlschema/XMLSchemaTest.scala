@@ -84,7 +84,7 @@ object XMLSchemaTest extends TestSuite:
 
     test("complexContent with mixed attribute") {
       val xsd =
-        """<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://example.com">
+        """<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://example.com" targetNamespace="http://example.com">
           |  <xs:complexType name="baseType">
           |    <xs:sequence>
           |      <xs:element name="child" type="xs:string"/>
@@ -92,7 +92,7 @@ object XMLSchemaTest extends TestSuite:
           |  </xs:complexType>
           |  <xs:complexType name="mixedType">
           |    <xs:complexContent mixed="true">
-          |      <xs:extension base="baseType">
+          |      <xs:extension base="tns:baseType">
           |        <xs:sequence>
           |          <xs:element name="extra" type="xs:string"/>
           |        </xs:sequence>
