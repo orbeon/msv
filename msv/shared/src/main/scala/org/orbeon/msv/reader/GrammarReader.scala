@@ -91,11 +91,12 @@ abstract class GrammarReader protected (
     if idx < 0 then
       var ns = prefixResolver.resolve("")
       if ns == null then ns = ""
-      Array(ns, qName, qName)
+      Array(ns, qName, qName, "")
     else
-      val uri = prefixResolver.resolve(qName.substring(0, idx))
+      val prefix = qName.substring(0, idx)
+      val uri = prefixResolver.resolve(prefix)
       if uri == null then null
-      else Array(uri, qName.substring(idx + 1), qName)
+      else Array(uri, qName.substring(idx + 1), qName, prefix)
 
   /**
    * intercepts an expression made by ExpressionState

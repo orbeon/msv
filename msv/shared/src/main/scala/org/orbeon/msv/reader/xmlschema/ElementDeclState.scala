@@ -105,8 +105,28 @@ class ElementDeclState extends ExpressionWithChildState:
       else
         reader.resolveNamespaceOfElementDecl(startTag.getAttribute("form"))
 
+    var prefix = ""
+    val typeAttr = startTag.getAttribute("type")
+    if typeAttr != null then
+      val idx = typeAttr.indexOf(':')
+      if idx > 0 then
+        prefix = typeAttr.substring(0, idx)
+    else
+      val refAttr = startTag.getAttribute("ref")
+      if refAttr != null then
+        val idx = refAttr.indexOf(':')
+        if idx > 0 then
+          prefix = refAttr.substring(0, idx)
+
     val fixed = startTag.getAttribute("fixed")
+    val defaultValue = startTag.getAttribute("default")
     if fixed != null then
+      if defaultValue != null then
+        reader.reportError(
+          Array[Locator](this.location),
+          XMLSchemaReader.ERR_FIXED_AND_DEFAULT,
+          null
+        )
       contentType = reader.pool.createValue(
         org.orbeon.msv.datatype.xsd.TokenType.theInstance,
         new StringPair("", "token"),
@@ -129,8 +149,9 @@ class ElementDeclState extends ExpressionWithChildState:
     reader.setDeclaredLocationOf(decl)
 
     val exp = new decl.XSElementExp(
-      new SimpleNameClass(targetNamespace, name),
-      contentType
+      new SimpleNameClass(targetNamespace, name, prefix),
+      contentType,
+      defaultValue
     )
 
     decl.setElementExp(exp)

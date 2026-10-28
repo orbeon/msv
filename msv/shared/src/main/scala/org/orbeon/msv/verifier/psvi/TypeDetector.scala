@@ -1,5 +1,6 @@
 package org.orbeon.msv.verifier.psvi
 
+import scala.compiletime.uninitialized
 import org.orbeon.msv.grammar.ElementExp
 import org.orbeon.msv.relaxng.datatype.Datatype
 import org.orbeon.msv.util.{DatatypeRef, StartTagInfo, StringRef}
@@ -19,7 +20,7 @@ class TypeDetector(documentDecl: DocumentDeclaration, errorHandler: ErrorHandler
   /** characters that were read (but not processed) */
   private var text: StringBuilder = new StringBuilder()
 
-  protected var handler: TypedContentHandler = _
+  protected var handler: TypedContentHandler = uninitialized
 
   def this(documentDecl: DocumentDeclaration, handler: TypedContentHandler, errorHandler: ErrorHandler) =
     this(documentDecl, errorHandler)

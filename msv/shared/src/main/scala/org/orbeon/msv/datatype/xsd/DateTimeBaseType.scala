@@ -48,7 +48,10 @@ abstract class DateTimeBaseType(typeName: String)
         throw new IllegalArgumentException()
 
   final override def _createJavaObject(literal: String, context: ValidationContext): AnyRef =
-    CalendarParser.parse(getFormat(), literal)
+    try
+      CalendarParser.parse(getFormat(), literal)
+    catch
+      case _: IllegalArgumentException => null
 
   override def serializeJavaObject(value: AnyRef, context: SerializationContext): String =
     value match

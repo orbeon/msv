@@ -47,8 +47,13 @@ final class CalendarParser private (format: String, value: String) extends Abstr
   protected def setMonth(i: Int): Unit =
     cal.set(Calendar.MONTH, i - 1)
 
-  protected def setYear(i: Int): Unit =
-    cal.set(Calendar.YEAR, i)
+  protected def setYear(i: java.math.BigInteger): Unit = {
+    // XSD has no year 0: -0001 is 1 BCE, -0002 is 2 BCE, etc.
+    // GregorianCalendar is proleptic: year 0 = 1 BCE, year -1 = 2 BCE.
+    // So for non-positive XSD years, add 1 to convert to Calendar convention.
+    val v = i.intValue()
+    cal.set(Calendar.YEAR, if (v <= 0) v + 1 else v)
+  }
 }
 
 object CalendarParser {

@@ -70,6 +70,7 @@ class AttributeState extends ExpressionWithChildState with XSTypeOwner:
     val fixed = startTag.getAttribute("fixed")
     val name = startTag.getAttribute("name")
     val use = startTag.getAttribute("use")
+    val defaultValue = startTag.getAttribute("default")
 
     var exp: Expression = null
 
@@ -93,6 +94,12 @@ class AttributeState extends ExpressionWithChildState with XSTypeOwner:
           reader.resolveNamespaceOfAttributeDecl(startTag.getAttribute("form"))
 
       if fixed != null then
+        if defaultValue != null then
+          reader.reportError(
+            Array[Locator](this.location),
+            XMLSchemaReader.ERR_FIXED_AND_DEFAULT,
+            null
+          )
         contentType match
           case baseType: XSDatatypeExp =>
             try
@@ -114,7 +121,7 @@ class AttributeState extends ExpressionWithChildState with XSTypeOwner:
         // use='prohibited' is implemented through NoneType
         contentType = reader.pool.createData(NoneType.theInstance)
 
-      exp = createAttribute(new SimpleNameClass(targetNamespace, name), contentType)
+      exp = createAttribute(new SimpleNameClass(targetNamespace, name), contentType, defaultValue)
 
     if isGlobal() then
       // register this expression as a global attribute declaration.
@@ -140,8 +147,8 @@ class AttributeState extends ExpressionWithChildState with XSTypeOwner:
 
     exp
 
-  protected def createAttribute(nc: NameClass, exp: Expression): Expression =
-    reader.pool.createAttribute(nc, exp)
+  protected def createAttribute(nc: NameClass, exp: Expression, defaultValue: String = null): Expression =
+    reader.pool.createAttribute(nc, exp, defaultValue)
 
   def getTargetNamespaceUri: String =
     this.reader.asInstanceOf[XMLSchemaReader].currentSchema.targetNamespace

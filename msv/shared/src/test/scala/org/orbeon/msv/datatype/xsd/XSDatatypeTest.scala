@@ -110,10 +110,14 @@ object XSDatatypeTest extends TestSuite:
       assert(floatType.isValid("-INF", dummyContext))
       assert(floatType.isValid("3.14", dummyContext))
       assert(floatType.isValid("-1.2E3", dummyContext))
+      assert(!floatType.isValid("3.14f", dummyContext))
+      assert(!floatType.isValid("3.14F", dummyContext))
 
       val doubleType = DatatypeFactory.getTypeByName("double")
       assert(doubleType.isValid("NaN", dummyContext))
       assert(doubleType.isValid("1.23456789e-10", dummyContext))
+      assert(!doubleType.isValid("1.23456789f", dummyContext))
+      assert(!doubleType.isValid("1.23456789F", dummyContext))
     }
 
     test("hexBinary and base64Binary validation and conversion") {
@@ -125,7 +129,11 @@ object XSDatatypeTest extends TestSuite:
       val b64 = DatatypeFactory.getTypeByName("base64Binary")
       assert(b64.isValid("YW55IGNhcm5hbCBwbGVhc3VyZS4=", dummyContext))
       assert(b64.isValid("", dummyContext))
+      assert(b64.isValid("YW55 IGNh cm5h bCBw bGVh c3Vy ZS4=", dummyContext)) // whitespace allowed
+      assert(b64.isValid(" \n YW55IGNhcm5hbCBwbGVhc3VyZS4= \t ", dummyContext))
       assert(!b64.isValid("YW55IGNhcm5hbCBwbGVhc3VyZS", dummyContext)) // missing padding
+      assert(!b64.isValid("YW55IGNhcm5hbCBwbGVhc3VyZS4%", dummyContext)) // illegal character
+      assert(!b64.isValid("YW55!GNhcm5hbCBwbGVhc3VyZS4=", dummyContext)) // illegal character
     }
 
     test("QName validation with ValidationContext") {
@@ -215,6 +223,17 @@ object XSDatatypeTest extends TestSuite:
       assert(curType.isValid("99", dummyContext))
       assert(!curType.isValid("123.45", dummyContext)) // 5 digits total
       assert(!curType.isValid("1.234", dummyContext)) // 3 fraction digits
+    }
+
+    test("TotalDigitsFacet precision count") {
+      assert(TotalDigitsFacet.countPrecision("0") == 1)
+      assert(TotalDigitsFacet.countPrecision("100") == 3)
+      assert(TotalDigitsFacet.countPrecision("-11100") == 5)
+      assert(TotalDigitsFacet.countPrecision("+00123") == 3)
+      assert(TotalDigitsFacet.countPrecision("1.20") == 2)
+      assert(TotalDigitsFacet.countPrecision("1.2000") == 2)
+      assert(TotalDigitsFacet.countPrecision("0.050") == 2)
+      assert(TotalDigitsFacet.countPrecision("+00123.4500") == 5)
     }
 
     test("derivation by list") {

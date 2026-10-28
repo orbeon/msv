@@ -19,9 +19,9 @@ class ExpressionPool(parent: ExpressionPool) extends Serializable {
   final def createAttribute(nameClass: NameClass): Expression =
     unify(new AttributeExp(nameClass, Expression.anyString))
 
-  final def createAttribute(nameClass: NameClass, content: Expression): Expression = {
+  final def createAttribute(nameClass: NameClass, content: Expression, defaultValue: String = null): Expression = {
     if (content eq Expression.nullSet) content
-    else unify(new AttributeExp(nameClass, content))
+    else unify(new AttributeExp(nameClass, content, defaultValue))
   }
 
   final def createEpsilon(): Expression = Expression.epsilon

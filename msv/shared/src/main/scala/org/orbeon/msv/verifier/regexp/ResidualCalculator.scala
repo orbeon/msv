@@ -38,13 +38,18 @@ class ResidualCalculator(protected val pool: ExpressionPool) extends ExpressionV
     if (token.isInstanceOf[ElementToken])
       return calcResidual(exp, token.asInstanceOf[ElementToken])
 
+    val oldToken = this.token
     this.token = token
-    var r = exp.visit(this)
+    try {
+      var r = exp.visit(this)
 
-    if (token.isIgnorable)
-      r = pool.createChoice(r, exp)
+      if (token.isIgnorable)
+        r = pool.createChoice(r, exp)
 
-    r
+      r
+    } finally {
+      this.token = oldToken
+    }
   }
 
   def onAttribute(exp: AttributeExp): Expression = {

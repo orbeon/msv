@@ -136,11 +136,14 @@ class BigTimeDurationValueType extends ITimeDurationValueType {
       dateLen += 1
     }
 
-    if (s.length != idx(0) && s.charAt(idx(0)) != 'T') {
-      throw new IllegalArgumentException(s)
-    }
+    var hasT = false
     if (s.length != idx(0)) {
-      idx(0) += 1
+      if (s.charAt(idx(0)) == 'T') {
+        hasT = true
+        idx(0) += 1
+      } else {
+        throw new IllegalArgumentException(s)
+      }
     }
 
     var timeLen = 0
@@ -156,6 +159,9 @@ class BigTimeDurationValueType extends ITimeDurationValueType {
       throw new IllegalArgumentException(s)
     }
     if (dateLen == 0 && timeLen == 0) {
+      throw new IllegalArgumentException(s)
+    }
+    if (hasT && timeLen == 0) {
       throw new IllegalArgumentException(s)
     }
 

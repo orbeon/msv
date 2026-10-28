@@ -61,8 +61,11 @@ class PreciseCalendarParser private (format: String, value: String) extends Abst
     month = java.lang.Integer.valueOf(i - 1)
   }
 
-  protected def setYear(i: Int): Unit = {
-    year = BigInteger.valueOf(i.toLong)
+  protected def setYear(i: BigInteger): Unit = {
+    // XSD has no year 0: -0001 is 1 BCE, -0002 is 2 BCE, etc.
+    // Internally, value 0 means year -1, value -1 means year -2, etc.
+    // So for non-positive XSD years, add 1 to convert to internal convention.
+    year = if (i.signum() <= 0) i.add(BigInteger.ONE) else i
   }
 }
 

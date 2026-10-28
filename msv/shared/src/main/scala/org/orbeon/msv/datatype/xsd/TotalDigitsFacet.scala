@@ -53,30 +53,26 @@ class TotalDigitsFacet(
 object TotalDigitsFacet:
   /** Counts the number of digits */
   def countPrecision(literal: String): Int =
-    val len = literal.length
-    var skipMode = true
-    var seenDot = false
-    var count = 0
-    var trailingZero = 0
+    val start =
+      if literal.nonEmpty && (literal.charAt(0) == '+' || literal.charAt(0) == '-') then 1
+      else 0
 
-    var i = 0
-    while i < len do
-      val ch = literal.charAt(i)
-      if ch == '.' then
-        skipMode = false // digits after '.' is considered significant.
-        seenDot = true
+    val dot = literal.indexOf('.')
+    val intEnd = if dot < 0 then literal.length else dot
+    val fracStart = if dot < 0 then literal.length else dot + 1
+    var fracEnd = literal.length
 
-      if skipMode then
-        // in skip mode, leading zeros are skipped
-        if '1' <= ch && ch <= '9' then
-          count += 1
-          skipMode = false
-      else
-        if seenDot && ch == '0' then trailingZero += 1
-        else trailingZero = 0
+    // Integer trailing zeros are significant. Only trim leading zeros.
+    var intStart = start
+    while intStart < intEnd && literal.charAt(intStart) == '0' do
+      intStart += 1
+    val intDigits = intEnd - intStart
 
-        if '0' <= ch && ch <= '9' then
-          count += 1
-      i += 1
+    // Fraction leading zeros are significant, but trailing zeros are not.
+    while fracEnd > fracStart && literal.charAt(fracEnd - 1) == '0' do
+      fracEnd -= 1
+    val fracDigits = fracEnd - fracStart
 
-    count - trailingZero
+    val total = intDigits + fracDigits
+    // Zero still has precision 1.
+    if total == 0 then 1 else total

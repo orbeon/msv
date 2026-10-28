@@ -34,3 +34,15 @@ class ComplexContentState(protected val parentDecl: ComplexTypeExp) extends Expr
       throw new Error()
 
     newChildExpression
+
+  override protected def annealExpression(contentType: Expression): Expression =
+    val reader = this.reader.asInstanceOf[XMLSchemaReader]
+    val mixed = startTag.getAttribute("mixed")
+
+    var content = contentType
+    if "true" == mixed then
+      content = reader.pool.createMixed(content)
+    else if mixed != null && "false" != mixed then
+      reader.reportError(XMLSchemaReader.ERR_BAD_ATTRIBUTE_VALUE, "mixed", mixed)
+
+    content

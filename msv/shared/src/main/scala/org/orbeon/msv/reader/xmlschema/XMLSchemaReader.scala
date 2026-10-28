@@ -564,6 +564,7 @@ object XMLSchemaReader:
   val ERR_KEYREF_REFERRING_NON_KEY: String = "XMLSchemaReader.KeyrefReferringNonKey"
   val ERR_UNRELATED_TYPES_IN_SUBSTITUTIONGROUP: String = "XMLSchemaReader.UnrelatedTypesInSubstitutionGroup"
   val ERR_RECURSIVE_SUBSTITUTION_GROUP: String = "XMLSchemaReader.RecursiveSubstitutionGroup"
+  val ERR_FIXED_AND_DEFAULT: String = "XMLSchemaReader.FixedAndDefault"
   val WRN_IMPLICIT_URTYPE_FOR_ELEMENT: String = "XMLSchemaReader.Warning.ImplicitUrTypeForElement"
 
   private val messages: Map[String, String] = Map(
@@ -624,5 +625,6 @@ object XMLSchemaReader:
     "XMLSchemaReader.KeyFieldNumberMismatch" -> "The specified key \"{0}\" has {1} fields but this keyref \"{2}\" has {3} fields.",
     "XMLSchemaReader.UnrelatedTypesInSubstitutionGroup" -> "The element \"{0}\" is designated as the substitution afiiliation of \"{1}\", but they have unrelated types.",
     "XMLSchemaReader.RecursiveSubstitutionGroup" -> "The element \"{0}\" and {1}\" forms cyclic substitution relationship.",
+    "XMLSchemaReader.FixedAndDefault" -> "Can not have both 'fixed' and 'default' value.",
     "XMLSchemaReader.Warning.ImplicitUrTypeForElement" -> "\"anyType\" is implicitly used as the content model of this element. Is this your intention? If so, please consider to write it explicitly as type=\"anyType\"."
   )

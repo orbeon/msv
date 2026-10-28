@@ -27,8 +27,11 @@ class ElementDeclExp(val parent: XMLSchemaSchema, typeLocalName: String) extends
 
   def getContentModel: Expression = element.contentModel
 
-  class XSElementExp(val elementName: SimpleNameClass, contentModel: Expression)
-    extends ElementExp(contentModel, false):
+  class XSElementExp(
+    val elementName: SimpleNameClass,
+    contentModel: Expression,
+    val defaultValue: String = null
+  ) extends ElementExp(contentModel, false):
 
     val parent: ElementDeclExp = ElementDeclExp.this
 

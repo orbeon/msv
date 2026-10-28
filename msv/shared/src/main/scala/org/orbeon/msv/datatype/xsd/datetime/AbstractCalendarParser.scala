@@ -27,6 +27,11 @@ abstract class AbstractCalendarParser(
   private var fidx = 0
   protected var vidx = 0
 
+  // track parsed date components for day-in-month validation
+  private var parsedYear = Int.MinValue
+  private var parsedMonth = Int.MinValue
+  private var parsedDay = Int.MinValue
+
   @throws(classOf[IllegalArgumentException])
   def parse(): Unit = {
     while (fidx < flen) {
@@ -45,13 +50,35 @@ abstract class AbstractCalendarParser(
               vidx += 1
               sign = -1
             }
-            setYear(sign * parseInt(4, Int.MaxValue))
+            val yearStart = vidx
+            var yearBig = parseBigInteger(4, Int.MaxValue)
+            if sign == -1 then
+              yearBig = yearBig.negate()
+            if yearBig.signum() == 0 then
+              throw new IllegalArgumentException(value) // no year 0 in XSD
+            val yearDigits = vidx - yearStart
+            if yearDigits > 4 && value.charAt(yearStart) == '0' then
+              throw new IllegalArgumentException(value) // no leading zeros on 5+ digit years
+            try {
+              parsedYear = yearBig.intValueExact()
+            } catch {
+              case _: ArithmeticException => /* too large for int */
+            }
+            setYear(yearBig)
 
           case 'M' =>
-            setMonth(parseInt(2, 2))
+            val month = parseInt(2, 2)
+            if month < 1 || month > 12 then
+              throw new IllegalArgumentException(value)
+            parsedMonth = month
+            setMonth(month)
 
           case 'D' =>
-            setDay(parseInt(2, 2))
+            val day = parseInt(2, 2)
+            if day < 1 || day > 31 then
+              throw new IllegalArgumentException(value)
+            parsedDay = day
+            setDay(day)
 
           case 'h' =>
             setHours(parseInt(2, 2))
@@ -76,7 +103,10 @@ abstract class AbstractCalendarParser(
               val h = parseInt(2, 2)
               skip(':')
               val m = parseInt(2, 2)
-              setTimeZone(new SimpleTimeZone((h * 60 + m) * (if (vch == '+') 1 else -1) * 60 * 1000, ""))
+              val totalMinutes = h * 60 + m
+              if totalMinutes > 14 * 60 then
+                throw new IllegalArgumentException(value) // timezone offset out of range
+              setTimeZone(new SimpleTimeZone(totalMinutes * (if (vch == '+') 1 else -1) * 60 * 1000, ""))
             } else {
               setTimeZone(TimeZone.MISSING)
             }
@@ -89,6 +119,15 @@ abstract class AbstractCalendarParser(
 
     if (vidx != vlen) {
       throw new IllegalArgumentException(value)
+    }
+
+    // validate day against month/year (day-in-month check)
+    if (parsedDay != Int.MinValue && parsedMonth != Int.MinValue) {
+      val y = if (parsedYear != Int.MinValue) parsedYear else 4 // default to leap year if year not specified
+      val maxDay = Util.maximumDayInMonthFor(y, parsedMonth - 1) // Util uses 0-based month
+      if (parsedDay > maxDay) {
+        throw new IllegalArgumentException(value)
+      }
     }
   }
 
@@ -144,7 +183,7 @@ abstract class AbstractCalendarParser(
   protected def setHours(i: Int): Unit
   protected def setDay(i: Int): Unit
   protected def setMonth(i: Int): Unit
-  protected def setYear(i: Int): Unit
+  protected def setYear(i: BigInteger): Unit
 }
 
 object AbstractCalendarParser {

@@ -64,6 +64,9 @@ object Base64BinaryType:
 
     map
 
+  private def isXMLSpace(c: Char): Boolean =
+    c == ' ' || c == '\r' || c == '\n' || c == '\t'
+
   def load(lexicalValue: String): Array[Byte] =
     val buf = lexicalValue.toCharArray
     val outlen = calcLength(buf)
@@ -77,21 +80,23 @@ object Base64BinaryType:
 
     var i = 0
     while i < len do
-      val v = decodeMap(buf(i).toInt)
-      if v != -1 then
-        quadruplet(q) = v
-        q += 1
+      val ch = buf(i)
+      if !isXMLSpace(ch) then
+        val v = decodeMap(ch.toInt)
+        if v != -1 then
+          quadruplet(q) = v
+          q += 1
 
-      if q == 4 then
-        out(o) = ((quadruplet(0) << 2) | ((quadruplet(1) & 0xff) >> 4)).toByte
-        o += 1
-        if quadruplet(2) != PADDING then
-          out(o) = (((quadruplet(1) & 0xff) << 4) | ((quadruplet(2) & 0xff) >> 2)).toByte
+        if q == 4 then
+          out(o) = ((quadruplet(0) << 2) | ((quadruplet(1) & 0xff) >> 4)).toByte
           o += 1
-        if quadruplet(3) != PADDING then
-          out(o) = (((quadruplet(2) & 0xff) << 6) | (quadruplet(3) & 0xff)).toByte
-          o += 1
-        q = 0
+          if quadruplet(2) != PADDING then
+            out(o) = (((quadruplet(1) & 0xff) << 4) | ((quadruplet(2) & 0xff) >> 2)).toByte
+            o += 1
+          if quadruplet(3) != PADDING then
+            out(o) = (((quadruplet(2) & 0xff) << 6) | (quadruplet(3) & 0xff)).toByte
+            o += 1
+          q = 0
       i += 1
 
     if q != 0 then throw new IllegalStateException()
@@ -106,23 +111,26 @@ object Base64BinaryType:
 
     var broken = false
     while i < len && !broken do
-      if buf(i) == '=' then
+      val ch = buf(i)
+      if isXMLSpace(ch) then
+        i += 1
+      else if ch == '=' then
         broken = true
-      else if buf(i) >= 256 then
+      else if ch >= 256 || decodeMap(ch.toInt) == -1 then
         return -1
       else
-        if decodeMap(buf(i).toInt) != -1 then
-          base64count += 1
+        base64count += 1
         i += 1
 
     while i < len do
-      if buf(i) == '=' then
+      val ch = buf(i)
+      if isXMLSpace(ch) then
+        i += 1
+      else if ch != '=' then
+        return -1
+      else
         paddingCount += 1
-      else if buf(i) >= 256 then
-        return -1
-      else if decodeMap(buf(i).toInt) != -1 then
-        return -1
-      i += 1
+        i += 1
 
     if paddingCount > 2 then return -1
     if (base64count + paddingCount) % 4 != 0 then return -1
