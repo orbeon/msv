@@ -1,6 +1,6 @@
 package org.orbeon.msv.reader.xmlschema
 
-import org.relaxng.datatype.DatatypeException
+import org.orbeon.msv.relaxng.datatype.DatatypeException
 import org.xml.sax.Locator
 import org.orbeon.msv.datatype.xsd.TokenType
 import org.orbeon.msv.grammar.*
@@ -20,13 +20,13 @@ import org.orbeon.msv.util.StringPair
  */
 class AttributeState extends ExpressionWithChildState with XSTypeOwner:
 
-  protected def createChildState(tag: StartTagInfo): State =
+  override protected def createChildState(tag: StartTagInfo): State =
     if tag.localName == "simpleType" then
       this.reader.asInstanceOf[XMLSchemaReader].sfactory.simpleType(this, tag)
     else
       super.createChildState(tag)
 
-  protected def initialExpression(): Expression =
+  override protected def initialExpression(): Expression =
     val reader = this.reader.asInstanceOf[XMLSchemaReader]
 
     if startTag.containsAttribute("ref") then
@@ -56,7 +56,7 @@ class AttributeState extends ExpressionWithChildState with XSTypeOwner:
     // if no type definition is given, assume ur-type.
     Expression.anyString
 
-  protected def castExpression(halfCastedExpression: Expression, newChildExpression: Expression): Expression =
+  override protected def castExpression(halfCastedExpression: Expression, newChildExpression: Expression): Expression =
     if halfCastedExpression != null then
       // only one child is allowed.
       // recover by ignoring previously found child expressions.
@@ -130,7 +130,7 @@ class AttributeState extends ExpressionWithChildState with XSTypeOwner:
         case attExp: AttributeExp =>
           decl.set(attExp)
         case _ =>
-          if !reader.controller.hadError() then throw new Error()
+          if !reader.controller.hadError then throw new Error()
     else
       // handle @use
       if "optional" == use || use == null || "prohibited" == use then
@@ -143,7 +143,7 @@ class AttributeState extends ExpressionWithChildState with XSTypeOwner:
   protected def createAttribute(nc: NameClass, exp: Expression): Expression =
     reader.pool.createAttribute(nc, exp)
 
-  def getTargetNamespaceUri(): String =
+  def getTargetNamespaceUri: String =
     this.reader.asInstanceOf[XMLSchemaReader].currentSchema.targetNamespace
 
   def onEndChild(dataType: XSDatatypeExp): Unit =

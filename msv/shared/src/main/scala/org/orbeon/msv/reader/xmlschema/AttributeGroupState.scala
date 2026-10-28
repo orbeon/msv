@@ -16,14 +16,14 @@ import org.orbeon.msv.util.StartTagInfo
  */
 class AttributeGroupState extends RedefinableDeclState with AnyAttributeOwner:
 
-  protected def createChildState(tag: StartTagInfo): State =
+  override protected def createChildState(tag: StartTagInfo): State =
     val reader = this.reader.asInstanceOf[XMLSchemaReader]
     reader.createAttributeState(this, tag)
 
-  protected def getContainer(): ReferenceContainer =
+  override protected def getContainer(): ReferenceContainer =
     this.reader.asInstanceOf[XMLSchemaReader].currentSchema.attributeGroups
 
-  protected def initialExpression(): Expression =
+  override protected def initialExpression(): Expression =
     val reader = this.reader.asInstanceOf[XMLSchemaReader]
 
     val refQName = startTag.getAttribute("ref")
@@ -45,7 +45,7 @@ class AttributeGroupState extends RedefinableDeclState with AnyAttributeOwner:
   def setAttributeWildcard(local: AttributeWildcard): Unit =
     this.wildcard = local
 
-  protected def castExpression(halfCastedExpression: Expression, newChildExpression: Expression): Expression =
+  override protected def castExpression(halfCastedExpression: Expression, newChildExpression: Expression): Expression =
     if startTag.containsAttribute("ref") then
       reader.reportError(XMLSchemaReader.ERR_MORE_THAN_ONE_CHILD_EXPRESSION)
     if halfCastedExpression == null then
@@ -67,7 +67,7 @@ class AttributeGroupState extends RedefinableDeclState with AnyAttributeOwner:
 
     val exp: AttributeGroupExp =
       if isRedefine() then
-        super.oldDecl.asInstanceOf[AttributeGroupExp]
+        oldDecl.asInstanceOf[AttributeGroupExp]
       else
         val created = reader.currentSchema.attributeGroups.getOrCreate(name)
         if created.exp != null then

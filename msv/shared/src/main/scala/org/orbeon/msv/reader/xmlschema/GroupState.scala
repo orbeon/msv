@@ -15,14 +15,14 @@ import org.orbeon.msv.util.StartTagInfo
  */
 class GroupState extends RedefinableDeclState:
 
-  protected def createChildState(tag: StartTagInfo): State =
+  override protected def createChildState(tag: StartTagInfo): State =
     val reader = this.reader.asInstanceOf[XMLSchemaReader]
     reader.createModelGroupState(this, tag)
 
-  protected def getContainer(): ReferenceContainer =
+  override protected def getContainer(): ReferenceContainer =
     this.reader.asInstanceOf[XMLSchemaReader].currentSchema.groupDecls
 
-  protected def initialExpression(): Expression =
+  override protected def initialExpression(): Expression =
     val reader = this.reader.asInstanceOf[XMLSchemaReader]
 
     if startTag.containsAttribute("ref") then
@@ -37,7 +37,7 @@ class GroupState extends RedefinableDeclState:
     else
       null // use null to indicate that there is no child expression.
 
-  protected def castExpression(halfCastedExpression: Expression, newChildExpression: Expression): Expression =
+  override protected def castExpression(halfCastedExpression: Expression, newChildExpression: Expression): Expression =
     if halfCastedExpression != null then
       reader.reportError(XMLSchemaReader.ERR_MORE_THAN_ONE_CHILD_EXPRESSION)
       halfCastedExpression
@@ -63,7 +63,7 @@ class GroupState extends RedefinableDeclState:
 
     val decl: GroupDeclExp =
       if isRedefine() then
-        super.oldDecl.asInstanceOf[GroupDeclExp]
+        oldDecl.asInstanceOf[GroupDeclExp]
       else
         val created = reader.currentSchema.groupDecls.getOrCreate(name)
         if created.exp != null then

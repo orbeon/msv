@@ -13,7 +13,7 @@ import org.orbeon.msv.util.StartTagInfo
  */
 class GlobalDeclState extends SimpleState with ExpressionOwner with XSTypeOwner:
 
-  protected def createChildState(tag: StartTagInfo): State =
+  override protected def createChildState(tag: StartTagInfo): State =
     val reader = this.reader.asInstanceOf[XMLSchemaReader]
 
     tag.localName match
@@ -29,7 +29,7 @@ class GlobalDeclState extends SimpleState with ExpressionOwner with XSTypeOwner:
       case "notation"       => reader.sfactory.notation(this, tag)
       case _                => null
 
-  def getTargetNamespaceUri(): String =
+  def getTargetNamespaceUri: String =
     val reader = this.reader.asInstanceOf[XMLSchemaReader]
     reader.currentSchema.targetNamespace
 

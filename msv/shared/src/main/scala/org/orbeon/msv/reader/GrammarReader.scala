@@ -41,7 +41,7 @@ abstract class GrammarReader protected (
   def getResultAsGrammar: Grammar
 
   /** checks if given element is that of the grammar elements. */
-  protected[reader] def isGrammarElement(tag: StartTagInfo): Boolean
+  protected[msv] def isGrammarElement(tag: StartTagInfo): Boolean
 
   var prefixResolver: GrammarReader.PrefixResolver = GrammarReader.basePrefixResolver
 
@@ -101,7 +101,7 @@ abstract class GrammarReader protected (
    * intercepts an expression made by ExpressionState
    * before it is passed to the parent state.
    */
-  protected[reader] def interceptExpression(state: State, exp: Expression): Expression = exp
+  protected[msv] def interceptExpression(state: State, exp: Expression): Expression = exp
 
   /**
    * tries to obtain a DataType object by resolving obsolete names.

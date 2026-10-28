@@ -14,7 +14,7 @@ import org.orbeon.msv.reader.State
  */
 class AnyElementState extends AnyState:
 
-  protected def createExpression(namespace: String, process: String): Expression =
+  override protected def createExpression(namespace: String, process: String): Expression =
     val reader = this.reader.asInstanceOf[XMLSchemaReader]
     val currentSchema = reader.currentSchema
 
@@ -79,5 +79,5 @@ class AnyElementState extends AnyState:
       exp.exp = Expression.nullSet
       exp
 
-  protected def getNameClassFrom(exp: ReferenceExp): NameClass =
+  override protected def getNameClassFrom(exp: ReferenceExp): NameClass =
     exp.asInstanceOf[ElementDeclExp].getElementExp.getNameClass

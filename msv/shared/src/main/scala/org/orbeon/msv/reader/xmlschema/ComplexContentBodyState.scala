@@ -15,10 +15,10 @@ class ComplexContentBodyState(
   protected val extension: Boolean
 ) extends SequenceState with AnyAttributeOwner:
 
-  protected def createChildState(tag: StartTagInfo): State =
+  override protected def createChildState(tag: StartTagInfo): State =
     val reader = this.reader.asInstanceOf[XMLSchemaReader]
 
-    if super.exp == Expression.epsilon then
+    if this.exp == Expression.epsilon then
       // model group must be the first expression child.
       val s = reader.createModelGroupState(this, tag)
       if s != null then return s

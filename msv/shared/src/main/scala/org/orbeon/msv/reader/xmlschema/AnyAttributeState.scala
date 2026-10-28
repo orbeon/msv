@@ -14,7 +14,7 @@ import org.orbeon.msv.grammar.xmlschema.XMLSchemaSchema
  */
 class AnyAttributeState extends AnyState:
 
-  protected def createExpression(namespace: String, process: String): Expression =
+  override protected def createExpression(namespace: String, process: String): Expression =
     val reader = this.reader.asInstanceOf[XMLSchemaReader]
     val currentSchema = reader.currentSchema
 
@@ -32,5 +32,5 @@ class AnyAttributeState extends AnyState:
 
     Expression.epsilon
 
-  protected def getNameClassFrom(exp: ReferenceExp): NameClass =
+  override protected def getNameClassFrom(exp: ReferenceExp): NameClass =
     exp.asInstanceOf[AttributeDeclExp].self.nameClass

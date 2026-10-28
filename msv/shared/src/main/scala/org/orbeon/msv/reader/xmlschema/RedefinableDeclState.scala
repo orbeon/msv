@@ -55,7 +55,7 @@ abstract class RedefinableDeclState extends ExpressionWithChildState:
         oldDecl = getContainer()._getOrCreate(name).asInstanceOf[RedefinableExp]
         return
 
-      getContainer().redefine(name, oldDecl.getClone)
+      getContainer().redefine(name, oldDecl.getClone())
 
   override protected def endSelf(): Unit =
     if oldDecl != null then

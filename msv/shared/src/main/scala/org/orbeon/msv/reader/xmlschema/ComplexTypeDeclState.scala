@@ -17,7 +17,7 @@ class ComplexTypeDeclState extends RedefinableDeclState with AnyAttributeOwner:
   /** ComplexType object that we are now constructing. */
   protected var decl: ComplexTypeExp = null
 
-  protected def getContainer(): ReferenceContainer =
+  override protected def getContainer(): ReferenceContainer =
     this.reader.asInstanceOf[XMLSchemaReader].currentSchema.complexTypes
 
   override protected def startSelf(): Unit =
@@ -69,7 +69,7 @@ class ComplexTypeDeclState extends RedefinableDeclState with AnyAttributeOwner:
   def setAttributeWildcard(local: AttributeWildcard): Unit =
     decl.wildcard = local
 
-  protected def createChildState(tag: StartTagInfo): State =
+  override protected def createChildState(tag: StartTagInfo): State =
     val reader = this.reader.asInstanceOf[XMLSchemaReader]
 
     // simpleContent, ComplexContent, group, all, choice, and sequence
@@ -82,7 +82,7 @@ class ComplexTypeDeclState extends RedefinableDeclState with AnyAttributeOwner:
     val s = reader.createModelGroupState(this, tag)
     if s != null then return s
 
-    if super.exp == null then
+    if this.exp == null then
       // no content model was given.
       // I couldn't "decipher" what should we do in this case.
       // I assume "empty" just because it's most likely.
@@ -92,7 +92,7 @@ class ComplexTypeDeclState extends RedefinableDeclState with AnyAttributeOwner:
     // after content model is given.
     reader.createAttributeState(this, tag)
 
-  protected def castExpression(halfCastedExpression: Expression, newChildExpression: Expression): Expression =
+  override protected def castExpression(halfCastedExpression: Expression, newChildExpression: Expression): Expression =
     if halfCastedExpression == null then
       newChildExpression // the first one
     else

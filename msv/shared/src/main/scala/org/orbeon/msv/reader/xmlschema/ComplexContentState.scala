@@ -15,10 +15,10 @@ import org.orbeon.msv.util.StartTagInfo
  */
 class ComplexContentState(protected val parentDecl: ComplexTypeExp) extends ExpressionWithChildState:
 
-  protected def createChildState(tag: StartTagInfo): State =
+  override protected def createChildState(tag: StartTagInfo): State =
     val reader = this.reader.asInstanceOf[XMLSchemaReader]
 
-    if super.exp != null then
+    if this.exp != null then
       // we have already parsed restriction/extension.
       return null
 
@@ -29,7 +29,7 @@ class ComplexContentState(protected val parentDecl: ComplexTypeExp) extends Expr
     else
       super.createChildState(tag)
 
-  protected def castExpression(halfCastedExpression: Expression, newChildExpression: Expression): Expression =
+  override protected def castExpression(halfCastedExpression: Expression, newChildExpression: Expression): Expression =
     if halfCastedExpression != null then
       throw new Error()
 
