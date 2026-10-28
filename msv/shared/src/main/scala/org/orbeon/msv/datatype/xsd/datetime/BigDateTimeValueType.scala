@@ -11,7 +11,6 @@ package org.orbeon.msv.datatype.xsd.datetime
 
 import org.orbeon.msv.datatype.xsd.Comparator
 import java.math.{BigDecimal, BigInteger}
-import java.util.Calendar
 
 /**
  * DateTimeValueType object that can hold all lexically valid dateTime value.
@@ -34,13 +33,13 @@ class BigDateTimeValueType(
   private var _hour: java.lang.Integer,
   private var _minute: java.lang.Integer,
   private var _second: BigDecimal,
-  private var _zone: java.util.TimeZone
+  private var _zone: TimeZone
 ) extends IDateTimeValueType {
 
   def this() =
     this(null, null, null, null, null, null, null)
 
-  def this(base: BigDateTimeValueType, newTimeZone: java.util.TimeZone) =
+  def this(base: BigDateTimeValueType, newTimeZone: TimeZone) =
     this(base.getYear, base.getMonth, base.getDay, base.getHour, base.getMinute, base.getSecond, newTimeZone)
 
   def this(
@@ -50,7 +49,7 @@ class BigDateTimeValueType(
     hour: Int,
     minute: Int,
     second: BigDecimal,
-    timeZone: java.util.TimeZone
+    timeZone: TimeZone
   ) =
     this(
       year,
@@ -68,7 +67,7 @@ class BigDateTimeValueType(
   def getHour: java.lang.Integer = _hour
   def getMinute: java.lang.Integer = _minute
   def getSecond: BigDecimal = _second
-  def getTimeZone: java.util.TimeZone = _zone
+  def getTimeZone: TimeZone = _zone
 
   def getBigValue(): BigDateTimeValueType = this
 
@@ -111,7 +110,7 @@ class BigDateTimeValueType(
     if (normalizedValue != null)
       return normalizedValue
 
-    normalizedValue = this.add(BigTimeDurationValueType.fromMinutes(-_zone.getRawOffset / (60 * 1000)))
+    normalizedValue = this.add(BigTimeDurationValueType.fromMinutes(-_zone.minutes))
     normalizedValue.asInstanceOf[BigDateTimeValueType]._zone = TimeZone.ZERO
     normalizedValue
   }
@@ -203,29 +202,6 @@ class BigDateTimeValueType(
   private def signed(dur: BigTimeDurationValueType, i: BigDecimal): BigDecimal =
     if (dur.signum < 0) i.negate() else i
 
-  def toCalendar(): Calendar = {
-    val cal = new java.util.GregorianCalendar(0, 0, 0)
-    cal.setTimeZone(createJavaTimeZone())
-    cal.clear(Calendar.YEAR)
-    cal.clear(Calendar.MONTH)
-    cal.clear(Calendar.DAY_OF_MONTH)
-
-    if (getYear != null) cal.set(Calendar.YEAR, getYear.intValue())
-    if (getMonth != null) cal.set(Calendar.MONTH, getMonth.intValue())
-    if (getDay != null) cal.set(Calendar.DAY_OF_MONTH, getDay.intValue() + 1)
-    if (getHour != null) cal.set(Calendar.HOUR_OF_DAY, getHour.intValue())
-    if (getMinute != null) cal.set(Calendar.MINUTE, getMinute.intValue())
-    if (getSecond != null) {
-      cal.set(Calendar.SECOND, getSecond.intValue())
-      cal.set(Calendar.MILLISECOND, getSecond.movePointRight(3).intValue() % 1000)
-    }
-    cal
-  }
-
-  protected def createJavaTimeZone(): java.util.TimeZone = {
-    val tz = getTimeZone
-    if (tz == null) TimeZone.MISSING else tz
-  }
 }
 
 object BigDateTimeValueType {

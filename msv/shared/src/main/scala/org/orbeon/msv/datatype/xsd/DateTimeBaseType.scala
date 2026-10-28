@@ -10,10 +10,8 @@
 package org.orbeon.msv.datatype.xsd
 
 import org.orbeon.msv.datatype.SerializationContext
-import org.orbeon.msv.datatype.xsd.datetime.{CalendarFormatter, CalendarParser, IDateTimeValueType, PreciseCalendarFormatter, PreciseCalendarParser}
+import org.orbeon.msv.datatype.xsd.datetime.{IDateTimeValueType, PreciseCalendarFormatter, PreciseCalendarParser}
 import org.orbeon.msv.relaxng.datatype.ValidationContext
-
-import java.util.Calendar
 
 /**
  * Base implementation of dateTime and dateTime-truncated types.
@@ -48,17 +46,12 @@ abstract class DateTimeBaseType(typeName: String)
         throw new IllegalArgumentException()
 
   final override def _createJavaObject(literal: String, context: ValidationContext): AnyRef =
-    try
-      CalendarParser.parse(getFormat(), literal)
-    catch
-      case _: IllegalArgumentException => null
+    _createValue(literal, context)
 
   override def serializeJavaObject(value: AnyRef, context: SerializationContext): String =
-    value match
-      case cal: Calendar => CalendarFormatter.format(getFormat(), cal)
-      case _             => throw new IllegalArgumentException()
+    convertToLexicalValue(value, context)
 
-  def getJavaObjectType(): Class[?] = classOf[Calendar]
+  def getJavaObjectType(): Class[?] = classOf[IDateTimeValueType]
 
   protected def getFormat(): String
 

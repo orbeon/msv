@@ -105,7 +105,8 @@ abstract class AbstractCalendarParser(
               val totalMinutes = h * 60 + m
               if totalMinutes > 14 * 60 then
                 throw new IllegalArgumentException(value) // timezone offset out of range
-              setTimeZone(TimeZone.create(totalMinutes * (if (vch == '+') 1 else -1) * 60 * 1000, ""))
+              val offsetMinutes = (if (vch == '+') 1 else -1) * totalMinutes
+              setTimeZone(TimeZone(offsetMinutes))
             } else {
               setTimeZone(TimeZone.MISSING)
             }
@@ -176,7 +177,7 @@ abstract class AbstractCalendarParser(
   }
 
   protected def parseFractionSeconds(): Unit
-  protected def setTimeZone(tz: java.util.TimeZone): Unit
+  protected def setTimeZone(tz: TimeZone): Unit
   protected def setSeconds(i: Int): Unit
   protected def setMinutes(i: Int): Unit
   protected def setHours(i: Int): Unit

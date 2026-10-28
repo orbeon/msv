@@ -9,8 +9,6 @@
  */
 package org.orbeon.msv.datatype.xsd.datetime
 
-import java.util.Calendar
-
 /**
  * Interface as value type of DateTimeType
  * 
@@ -38,10 +36,4 @@ trait IDateTimeValueType extends java.io.Serializable {
    * org.orbeon.msv.datatype.xsd.Comparator
    */
   def compare(rhs: IDateTimeValueType): Int
-
-  /**
-   * Approximates the value represented by this object into a Calendar object.
-   * This conversion may lose accuracy.
-   */
-  def toCalendar(): Calendar
 }

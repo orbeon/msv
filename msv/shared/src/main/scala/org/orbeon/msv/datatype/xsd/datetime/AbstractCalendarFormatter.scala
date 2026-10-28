@@ -9,8 +9,6 @@
  */
 package org.orbeon.msv.datatype.xsd.datetime
 
-import java.util.Calendar
-
 /**
  * @author Kohsuke Kawaguchi (kohsuke.kawaguchi@sun.com)
  */
@@ -47,7 +45,7 @@ abstract class AbstractCalendarFormatter {
     buf.toString
   }
 
-  protected def toCalendar(cal: AnyRef): Calendar
+  protected def getTimeZone(cal: AnyRef): TimeZone
   protected def formatYear(cal: AnyRef, buf: java.lang.StringBuilder): Unit
   protected def formatMonth(cal: AnyRef, buf: java.lang.StringBuilder): Unit
   protected def formatDays(cal: AnyRef, buf: java.lang.StringBuilder): Unit
@@ -56,32 +54,24 @@ abstract class AbstractCalendarFormatter {
   protected def formatSeconds(cal: AnyRef, buf: java.lang.StringBuilder): Unit
 
   /** Formats time zone specifier. */
-  private def formatTimeZone(_cal: AnyRef, buf: java.lang.StringBuilder): Unit = {
-    val cal = toCalendar(_cal)
-    val tz = cal.getTimeZone
+  private def formatTimeZone(cal: AnyRef, buf: java.lang.StringBuilder): Unit = {
+    val tz = getTimeZone(cal)
 
-    if (tz == null) return
-    if (tz == TimeZone.MISSING) return
+    if (tz == null || tz == TimeZone.MISSING) return
     if (tz == TimeZone.ZERO) {
       buf.append('Z')
       return
     }
 
-    var offset =
-      if (tz.inDaylightTime(cal.getTime)) {
-        tz.getRawOffset + (if (tz.useDaylightTime()) 3600000 else 0)
+    val minutes = tz.minutes
+    val offset =
+      if (minutes >= 0) {
+        buf.append('+')
+        minutes
       } else {
-        tz.getRawOffset
+        buf.append('-')
+        -minutes
       }
-
-    if (offset >= 0) {
-      buf.append('+')
-    } else {
-      buf.append('-')
-      offset *= -1
-    }
-
-    offset /= 60 * 1000
 
     formatTwoDigits(offset / 60, buf)
     buf.append(':')

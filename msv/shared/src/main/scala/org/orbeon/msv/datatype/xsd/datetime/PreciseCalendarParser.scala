@@ -22,7 +22,7 @@ class PreciseCalendarParser private (format: String, value: String) extends Abst
   private var hour: java.lang.Integer = null
   private var minute: java.lang.Integer = null
   private var second: BigDecimal = null
-  private var timeZone: java.util.TimeZone = null
+  private var timeZone: TimeZone = null
 
   private def createCalendar(): BigDateTimeValueType =
     new BigDateTimeValueType(year, month, day, hour, minute, second, timeZone)
@@ -35,7 +35,7 @@ class PreciseCalendarParser private (format: String, value: String) extends Abst
     else second = second.add(d)
   }
 
-  protected def setTimeZone(tz: java.util.TimeZone): Unit = {
+  protected def setTimeZone(tz: TimeZone): Unit = {
     this.timeZone = if (tz == TimeZone.MISSING) null else tz
   }
 

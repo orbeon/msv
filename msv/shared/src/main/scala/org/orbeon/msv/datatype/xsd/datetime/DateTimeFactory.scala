@@ -25,7 +25,7 @@ object DateTimeFactory {
     hour: java.lang.Integer,
     minute: java.lang.Integer,
     mSecond: Number,
-    zone: java.util.TimeZone
+    zone: TimeZone
   ): IDateTimeValueType = {
     val year: BigInteger =
       if (yearIn == null) null
@@ -51,7 +51,7 @@ object DateTimeFactory {
     year: Number,
     month: java.lang.Integer,
     day: java.lang.Integer,
-    zone: java.util.TimeZone
+    zone: TimeZone
   ): IDateTimeValueType =
     createFromDateTime(year, month, day, null, null, null, zone)
 
@@ -59,7 +59,7 @@ object DateTimeFactory {
     hour: java.lang.Integer,
     minute: java.lang.Integer,
     mSecond: Number,
-    zone: java.util.TimeZone
+    zone: TimeZone
   ): IDateTimeValueType =
     createFromDateTime(null, null, null, hour, minute, mSecond, zone)
 }

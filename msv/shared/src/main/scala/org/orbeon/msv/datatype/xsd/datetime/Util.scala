@@ -33,8 +33,8 @@ private[datetime] object Util {
   val decimal0: BigDecimal = new BigDecimal(BigInteger.ZERO, 0)
   val int0: java.lang.Integer = java.lang.Integer.valueOf(0)
 
-  val timeZonePos14: java.util.TimeZone = TimeZone.create(14 * 60 * 60 * 1000, "")
-  val timeZoneNeg14: java.util.TimeZone = TimeZone.create(-14 * 60 * 60 * 1000, "")
+  val timeZonePos14: TimeZone = TimeZone(14 * 60)
+  val timeZoneNeg14: TimeZone = TimeZone(-14 * 60)
 
   /**
    * Compare two objects

@@ -10,15 +10,14 @@
 package org.orbeon.msv.datatype.xsd.datetime
 
 import java.math.{BigDecimal, BigInteger}
-import java.util.Calendar
 
 /**
  * @author Kohsuke Kawaguchi (kohsuke.kawaguchi@sun.com)
  */
 class PreciseCalendarFormatter private () extends AbstractCalendarFormatter {
 
-  protected def toCalendar(cal: AnyRef): Calendar =
-    cal.asInstanceOf[BigDateTimeValueType].toCalendar()
+  protected def getTimeZone(cal: AnyRef): TimeZone =
+    cal.asInstanceOf[IDateTimeValueType].getBigValue().getTimeZone
 
   protected def formatYear(cal: AnyRef, buf: java.lang.StringBuilder): Unit = {
     val bv = cal.asInstanceOf[IDateTimeValueType].getBigValue()
