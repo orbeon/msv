@@ -2,6 +2,8 @@ import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
 enablePlugins(ScalaJSPlugin)
 
+val msvVersion = "2026.1-SNAPSHOT"
+
 val scala3 = "3.7.4"
 
 val SaxVersion          = "2.0.2.10-SNAPSHOT"
@@ -9,6 +11,7 @@ val XercesVersion       = "2.11.0.17-SNAPSHOT"
 val ScalaJsStubsVersion = "1.1.0"
 val UTestVersion        = "0.8.9"
 
+ThisBuild / version           := msvVersion
 ThisBuild / scalaVersion      := scala3
 ThisBuild / githubOwner       := "orbeon"
 ThisBuild / githubRepository  := "msv"
@@ -19,7 +22,7 @@ lazy val msv = (crossProject(JVMPlatform, JSPlatform).crossType(CrossType.Full) 
   .settings(
     organization := "org.orbeon",
     name         := "msv",
-    version      := "20081113.1-SNAPSHOT",
+    version      := msvVersion,
 
     scalaVersion := scala3,
 
