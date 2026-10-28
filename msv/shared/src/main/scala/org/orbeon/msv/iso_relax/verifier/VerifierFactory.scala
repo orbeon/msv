@@ -105,37 +105,21 @@ object VerifierFactory {
 
   @throws(classOf[VerifierConfigurationException])
   def newInstance(language: String): VerifierFactory =
-    newInstance(language, classOf[VerifierFactoryLoader].getClassLoader)
+    findFactory(language) match {
+      case Some(f) => f
+      case None    => throw new VerifierConfigurationException("no validation engine available for: " + language)
+    }
 
-  @throws(classOf[VerifierConfigurationException])
-  def newInstance(language: String, classLoader: ClassLoader): VerifierFactory = {
-    // 1. Try registered loaders first
+  private def findFactory(language: String): Option[VerifierFactory] = {
     val it = registeredLoaders.iterator()
     while (it.hasNext) {
       try {
         val factory = it.next().createFactory(language)
-        if (factory != null) return factory
+        if (factory != null) return Some(factory)
       } catch {
         case _: Throwable =>
       }
     }
-
-    // 2. Try ServiceLoader (available on JVM and some JS setups)
-    try {
-      val sl = java.util.ServiceLoader.load(classOf[VerifierFactoryLoader], classLoader)
-      val slIt = sl.iterator()
-      while (slIt.hasNext) {
-        try {
-          val factory = slIt.next().createFactory(language)
-          if (factory != null) return factory
-        } catch {
-          case _: Throwable =>
-        }
-      }
-    } catch {
-      case _: Throwable =>
-    }
-
-    throw new VerifierConfigurationException("no validation engine available for: " + language)
+    VerifierFactoryPlatform.findFactory(language)
   }
 }
