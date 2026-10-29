@@ -1,1 +1,0 @@
-This is based on a build of MSV version 20081113.
