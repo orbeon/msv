@@ -1,1 +1,0 @@
-This is based on a build of relaxngDatatype version 1.0.

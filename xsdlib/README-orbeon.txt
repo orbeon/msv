@@ -1,1 +1,0 @@
-This is based on a build of xsdlib version 20060319.
