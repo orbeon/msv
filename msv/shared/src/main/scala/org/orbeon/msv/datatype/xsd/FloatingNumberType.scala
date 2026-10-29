@@ -43,3 +43,6 @@ abstract class FloatingNumberType(typeName: String)
 object FloatingNumberType:
   def isDigitOrPeriodOrSign(ch: Char): Boolean =
     ('0' <= ch && ch <= '9') || ch == '+' || ch == '-' || ch == '.'
+
+  def hasHexIndicator(s: String): Boolean =
+    s.indexOf('x') >= 0 || s.indexOf('X') >= 0 || s.indexOf('p') >= 0 || s.indexOf('P') >= 0

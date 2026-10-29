@@ -45,7 +45,8 @@ object FloatType:
       else if s == "-INF" then java.lang.Float.valueOf(java.lang.Float.NEGATIVE_INFINITY)
       else if s.length == 0 ||
               !FloatingNumberType.isDigitOrPeriodOrSign(s.charAt(0)) ||
-              !FloatingNumberType.isDigitOrPeriodOrSign(s.charAt(s.length - 1)) then
+              !FloatingNumberType.isDigitOrPeriodOrSign(s.charAt(s.length - 1)) ||
+              FloatingNumberType.hasHexIndicator(s) then
         null
       else
         java.lang.Float.valueOf(s)

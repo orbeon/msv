@@ -45,7 +45,8 @@ object DoubleType:
       else if lexicalValue == "-INF" then java.lang.Double.valueOf(java.lang.Double.NEGATIVE_INFINITY)
       else if lexicalValue.length == 0 ||
               !FloatingNumberType.isDigitOrPeriodOrSign(lexicalValue.charAt(0)) ||
-              !FloatingNumberType.isDigitOrPeriodOrSign(lexicalValue.charAt(lexicalValue.length - 1)) then
+              !FloatingNumberType.isDigitOrPeriodOrSign(lexicalValue.charAt(lexicalValue.length - 1)) ||
+              FloatingNumberType.hasHexIndicator(lexicalValue) then
         null
       else
         java.lang.Double.valueOf(lexicalValue)
