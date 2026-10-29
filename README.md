@@ -1,14 +1,14 @@
 # Orbeon MSV (Multi-Schema XML Validator)
 
-A modern Scala 3 port of the Sun Multi-Schema XML Validator (MSV), cross-compiled for both the **Java Virtual Machine (JVM)** and **Scala.js** (browser and Node.js environments).
+A modern Scala 3 port of the Sun Multi-Schema XML Validator (MSV), cross-compiled for the **Java Virtual Machine (JVM)**, **Scala.js** (browser and Node.js environments), and **Scala Native**.
 
 ## Overview
 
 The Sun Multi-Schema XML Validator (MSV) is a Java XML validation engine originally created by Kohsuke Kawaguchi at Sun Microsystems. MSV supports multiple schema languages and provides fast, streaming XML validation using a SAX-based pipeline.
 
 This repository is **Orbeon's modernized fork**:
-- **Scala 3 Native**: Completely ported from Java to Scala 3.
-- **Cross-Platform**: Cross-compiled with [Scala.js](https://www.scala-js.org/) and JVM, enabling XML validation directly in web browsers and Node.js with zero JVM runtime dependencies.
+- **Scala 3**: Completely ported from Java to Scala 3.
+- **Cross-Platform**: Cross-compiled for the JVM, [Scala.js](https://www.scala-js.org/), and [Scala Native](https://scala-native.org/) (0.5), enabling XML validation across server, browser, Node.js, and native binary environments with zero JVM runtime dependencies.
 - **Unified Library**: Unifies MSV core, Sun XML Datatypes Library (XSDLib), and the RELAX NG Datatypes interface into a single, cohesive project.
 - **Production Proven**: Powers XML Schema and RELAX NG validation in [Orbeon Forms](https://www.orbeon.com/).
 - **Conformant & Extensively Tested**: Verified against official W3C XML Schema Datatype conformance suites, RELAX NG test suites, and complex real-world industry schemas (OASIS UBL 2.3, UN/CEFACT CII, OASIS OpenDocument 1.3).
@@ -17,17 +17,17 @@ This repository is **Orbeon's modernized fork**:
 
 ## Supported Schema Languages
 
-MSV supports an extensive range of XML schema grammars:
+MSV focuses on modern, widely used XML schema languages:
 
 | Schema Language | Specification / Details | Status |
 | :--- | :--- | :--- |
-| **W3C XML Schema 1.0 (XSD)** | XML Schema Part 1: Structures & Part 2: Datatypes | Full support for elements, complex/simple types, model groups (`sequence`, `choice`, `all`), wildcards (`any`, `anyAttribute`), substitution groups, identity constraints (`xs:unique`, `xs:key`, `xs:keyref`), facets, and all 44+ built-in datatypes |
-| **RELAX NG** | OASIS RELAX NG 1.0 (XML Syntax) | Full support including `interleave`, `except` name classes, definitions with `combine`, `externalRef`, `include`, and datatypes |
-| **RELAX NG DTD Compatibility** | OASIS RELAX NG DTD Compatibility | Default attribute values, ID/IDREF/IDREFS referential integrity, and documentation |
-| **TREX** | Tree Regular Expressions for XML | Full support (James Clark's predecessor to RELAX NG) |
-| **RELAX Core & RELAX Namespace** | JIS:TR X 0029:2000 | Supported |
-| **XML DTD** | XML 1.0 Recommendation | Element declarations, attribute lists, entity declarations |
-| **ISO RELAX / JARV** | Java API for RELAX Verifiers | Supported |
+| **W3C XML Schema 1.0 (XSD)** | XML Schema Part 1: Structures & Part 2: Datatypes | **Supported**: Elements, complex/simple types, model groups (`sequence`, `choice`, `all`), wildcards (`any`, `anyAttribute`), substitution groups, identity constraints (`xs:unique`, `xs:key`, `xs:keyref`), facets, and all 44+ built-in datatypes |
+| **RELAX NG** | OASIS RELAX NG 1.0 (XML Syntax) | **Supported**: Full support including `interleave`, `except` name classes, definitions with `combine`, `externalRef`, `include`, and datatypes |
+| **RELAX NG DTD Compatibility** | OASIS RELAX NG DTD Compatibility | **Supported**: Default attribute values, ID/IDREF/IDREFS referential integrity, and documentation |
+| **ISO RELAX / JARV** | Java API for RELAX Verifiers | **Supported**: Standard validation interfaces for W3C XML Schema and RELAX NG |
+| **TREX** | Tree Regular Expressions for XML | **Not supported**: James Clark's predecessor to RELAX NG. The standalone TREX grammar parser has been omitted in this modern port (internal TREX classes serve strictly as the shared AST and parsing base for RELAX NG) |
+| **RELAX Core & RELAX Namespace** | JIS:TR X 0029:2000 | **Not supported**: Legacy schema language omitted in this modern port |
+| **XML DTD** | XML 1.0 Recommendation | **Not supported**: Standalone DTD grammar validation omitted in this modern port |
 
 ---
 
@@ -42,7 +42,7 @@ Add the resolver and dependency to your `build.sbt`:
 ```scala
 resolvers += Resolver.githubPackages("orbeon")
 
-// For Scala.js or cross-projects:
+// For Scala.js, Scala Native, or cross-projects:
 libraryDependencies += "org.orbeon" %%% "msv" % "2026.1-SNAPSHOT"
 
 // For JVM-only projects:
@@ -154,12 +154,13 @@ Prerequisites:
 - JDK 17+ (or JDK 11+)
 - [sbt](https://www.scala-sbt.org/) 1.9+
 - [Node.js](https://nodejs.org/) (for running Scala.js test suites)
+- [Clang/LLVM](https://clang.llvm.org/) (for compiling and running Scala Native test suites)
 
 ```bash
-# Compile both JVM and Scala.js targets
+# Compile JVM, Scala.js, and Scala Native targets
 sbt compile
 
-# Run the complete test suite across JVM and Scala.js
+# Run the complete test suite across JVM, Scala.js, and Scala Native
 sbt test
 
 # Run JVM tests only (including large real-world schema tests)
@@ -168,9 +169,18 @@ sbt msvJVM/test
 # Run Scala.js tests only
 sbt msvJS/test
 
+# Run Scala Native tests only
+sbt msvNative/test
+
 # Publish snapshot to local Ivy repository
 sbt publishLocal
 ```
+
+### Scala Native Compilation
+
+MSV supports [Scala Native](https://scala-native.org/) (0.5.10+):
+- **Cross-Platform SAX Support**: Neither Scala.js nor Scala Native provides built-in XML/SAX parsing in standard libraries. MSV leverages Orbeon's portable [sax](https://github.com/orbeon/sax) and [darius-xml](https://github.com/orbeon/darius-xml) (Apache Xerces port) to provide consistent SAX parsing pipelines across both platforms.
+- **Specification Conformance**: Standard C library numeric routines (`strtod`/`strtof`) used by the Scala Native runtime accept hexadecimal floating-point representations (e.g. `0x123`). MSV adds dedicated token verification in `FloatType` and `DoubleType` to strictly uphold the W3C XML Schema Datatypes specification on native targets.
 
 ---
 
@@ -188,7 +198,8 @@ sbt publishLocal
 │   │   ├── src/main/scala/   # MSV, XSDLib, and RELAX NG datatypes
 │   │   └── src/test/         # Shared test suites (XSD, RNG, datatypes)
 │   ├── jvm/                  # JVM-specific integration tests & large schemas
-│   └── js/                   # Scala.js target configuration
+│   ├── js/                   # Scala.js target configuration & non-JVM SAX shims
+│   └── native/               # Scala Native target output
 ```
 
 ---
@@ -197,7 +208,7 @@ sbt publishLocal
 
 - **Original Creator**: Kohsuke Kawaguchi at Sun Microsystems.
 - **Upstream Development**: Maintained as part of Sun/Oracle open source XML initiatives and upstream community forks such as [xmlark/msv](https://github.com/xmlark/msv).
-- **Orbeon Fork**: Ported to Scala 3, cross-compiled for Scala.js, and maintained by [Orbeon](https://www.orbeon.com/).
+- **Orbeon Fork**: Ported to Scala 3, cross-compiled for Scala.js and Scala Native, and maintained by [Orbeon](https://www.orbeon.com/).
 
 ---
 
