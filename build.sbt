@@ -2,7 +2,7 @@ import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
 enablePlugins(ScalaJSPlugin)
 
-val msvVersion = "2026.1-SNAPSHOT.1"
+val msvVersion = "2026.1.1"
 
 val scala3 = "3.7.4"
 
